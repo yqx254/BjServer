@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.maven.core.dao.EmployeeDao">
+    <resultMap id="EmployeeResult" type="Employee">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="isPartyMember" column="is_party_member"/>
+        <result property="isMarried" column="is_married"/>
+        <result property="position" column="position"/>
+        <result property="joinAt" column="join_at"/>
+        <result property="nationality" column="nationality"/>
+        <result property="profession" column="profession"/>
+        <result property="remarks" column="remarks"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="findEmployee" parameterType="Map" resultMap="EmployeeResult">
+        SELECT * FROM ssm_employee
+        <where>
+            delete_flag = 0
+            <if test="keyword!=null and keyword !='' ">
+                AND (name LIKE concat('%',#{keyword},'%')  OR  mobile = #{keyword} OR
+                position LIKE concat('%',#{keyword},'%')  OR profession LIKE concat('%',#{keyword},'%') )
+            </if>
+            <if test="isPartyMember!=null and isPartyMember != 0 ">
+                AND  isPartyMember = #{isPartyMember}
+            </if>
+        </where>
+        <if test="start != null and size != null">
+            LIMIT #{start}, #{size}
+        </if>
+    </select>
+
+    <select id="getTotalEmployee" parameterType="Map" resultType="Long">
+        SELECT COUNT(*) FROM ssm_employee
+        <where>
+            delete_flag = 0
+            <if test="keyword!=null and keyword !='' ">
+                AND (name LIKE concat('%',#{keyword},'%')  OR  mobile = #{keyword} OR
+                position LIKE concat('%',#{keyword},'%')  OR profession LIKE concat('%',#{keyword},'%') )
+            </if>
+            <if test="isPartyMember!=null and isPartyMember != 0 ">
+                AND  isPartyMember = #{isPartyMember}
+            </if>
+        </where>
+        <if test="start!=null and size != null ">
+            LIMIT #{start}, #{size}
+        </if>
+    </select>
+
+    <select id="findEmployeeById" parameterType="String" resultMap="EmployeeResult">
+        SELECT * FROM ssm_employee WHERE id = #{id} AND delete_flag = 0;
+    </select>
+    <insert id="addEmployee" parameterType="Employee">
+        INSERT INTO ssm_employee(name,mobile,is_married,position,join_at,nationality,profession,remarks,delete_flag,
+                                 created_at,updated_at)
+        VALUES(#{name},#{mobile},#{isMarried},#{position},#{joinAt},#{nationality},#{profession},
+               #{remarks},#{deleteFlag},#{createdAt},#{updatedAt});
+    </insert>
+    <update id="updateEmployee" parameterType="Employee">
+        UPDATE ssm_employee SET name = #{name}, mobile=#{mobile},is_married=#{isMarried},position=#{position},is_party_member=#{isPartyMember},
+                                join_at=#{joinAt},nationality=#{nationality}, profession=#{profession},remarks=#{remarks},updated_at=#{updatedAt}
+        WHERE id=#{id}
+    </update>
+
+    <update id="deleteEmployee" parameterType="String">
+        UPDATE ssm_employee SET delete_flag = 2 WHERE id = #{id}
+    </update>
+
+    <select id="findEmpName" parameterType="String" resultType="String">
+        SELECT name FROM ssm_employee WHERE id = #{id} AND delete_flag = 0
+    </select>
+</mapper>
