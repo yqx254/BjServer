@@ -12,8 +12,8 @@ import java.util.*;
 /**
  * @author fstar
  */
-@Service
-public class MenuServiceImpl implements MenuService {
+@Service("MenuService")
+public class MenuServiceImp implements MenuService {
 
     @Resource
     private MenuDao menuDao;
@@ -45,7 +45,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     private void buildMenuList(Menu rootNode,
-                                                    List<Menu> subMenu){
+                               List<Menu> subMenu){
         subMenu.forEach(menu -> {
             if(Objects.equals(menu.getParentId(), rootNode.getId())){
                 rootNode.getSubMenu().add(menu);

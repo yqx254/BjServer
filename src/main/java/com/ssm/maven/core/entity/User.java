@@ -17,7 +17,8 @@ public class User {
     private String userName; // 用户姓名
     private String password; // 密码
     private String roleId;
-    private String roleName; //
+    private String roleName;
+    private String realName;
 
     public Integer getId() {
         return id;
@@ -57,5 +58,13 @@ public class User {
 
     public String getRoleId() {
         return roleId;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
     }
 }

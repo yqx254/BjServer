@@ -118,6 +118,7 @@
         <th field="cb" checkbox="true" align="center"></th>
         <th field="id" width="50" align="center">编号</th>
         <th field="userName" width="100" align="center">用户名</th>
+        <th field="realName" width="100" align="center">真实姓名</th>
         <th field="roleName" width="100" align="center">角色</th>
     </tr>
     </thead>
@@ -133,7 +134,7 @@
     </div>
     <div>
         &nbsp;用户名：&nbsp;<input type="text" id="s_userName" size="20"
-                               onkeydown="if(event.keyCode==13) searchUser()"/> <a
+                               onkeydown="if(event.keyCode===13) searchUser()"/> <a
             href="javascript:searchUser()" class="easyui-linkbutton"
             iconCls="icon-search" plain="true">搜索</a>
     </div>
@@ -147,6 +148,13 @@
             <tr>
                 <td>用户名：</td>
                 <td><input type="text" id="userName" name="userName"
+                           class="easyui-validatebox" required="true"/>&nbsp;<font
+                        color="red">*</font>
+                </td>
+            </tr>
+            <tr>
+                <td>用户名：</td>
+                <td><input type="text" id="realName" name="realName"
                            class="easyui-validatebox" required="true"/>&nbsp;<font
                         color="red">*</font>
                 </td>

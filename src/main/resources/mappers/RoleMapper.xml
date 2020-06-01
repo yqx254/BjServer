@@ -13,11 +13,11 @@
     </resultMap>
 
     <select id="findRoleById" parameterType="String" resultMap="roleResult">
-        SELECT * FROM ssm_role WHERE role_id = #{id};
+        SELECT * FROM bj_role WHERE role_id = #{id};
     </select>
 
     <select id="roleList" parameterType="Map" resultMap="roleResult">
-        SELECT role_id,role_name FROM ssm_role WHERE delete_flag = 0
+        SELECT role_id,role_name FROM bj_role WHERE delete_flag = 0
         <where>
             <if test="start != null and size != null">
                 AND LIMIT #{start}, #{size}
@@ -26,21 +26,21 @@
     </select>
 
     <select id="roleTotal" parameterType="Map" resultType="Long">
-        SELECT COUNT(*) FROM ssm_role WHERE delete_flag = 0;
+        SELECT COUNT(*) FROM bj_role WHERE delete_flag = 0;
     </select>
 
     <insert id="addRole" parameterType="Role" >
-        INSERT INTO ssm_role(role_name,created_at,updated_at)
+        INSERT INTO bj_role(role_name,created_at,updated_at)
         VALUES(#{roleName}, #{createdAt},#{updatedAt})
     </insert>
 
     <update id="updateRole" parameterType="Role">
-        UPDATE ssm_role SET  role_name = #{roleName}, updated_at=#{updatedAt}
+        UPDATE bj_role SET  role_name = #{roleName}, updated_at=#{updatedAt}
         WHERE role_id = #{roleId}
     </update>
 
     <update id="deleteRole" parameterType="String">
-        UPDATE ssm_role SET delete_flag = 2
+        UPDATE bj_role SET delete_flag = 2
         <where>
         role_id = #{id}
         </where>

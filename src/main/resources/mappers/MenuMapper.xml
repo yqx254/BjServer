@@ -12,6 +12,6 @@
     </resultMap>
 
     <select id="getMenuList" resultMap="menu"  >
-        SELECT * FROM ssm_menu;
+        SELECT * FROM bj_menu;
     </select>
 </mapper>

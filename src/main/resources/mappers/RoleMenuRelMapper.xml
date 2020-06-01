@@ -12,8 +12,8 @@
     </resultMap>
     <select id="getRoleMenu" parameterType="Long" resultMap="menu">
         SELECT  DISTINCT m.id,title,parent_id,page_url,icon
-        FROM ssm_menu AS m
-        JOIN ssm_role_menu_rel AS r ON  m.id = r.menu_id
+        FROM bj_menu AS m
+        JOIN bj_role_menu_rel AS r ON  m.id = r.menu_id
         <where>
             r.delete_flag = 0
             AND r.role_id = #{roleId}

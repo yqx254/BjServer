@@ -6,6 +6,7 @@
     <resultMap type="User" id="UserResult">
         <result property="id" column="id"/>
         <result property="userName" column="user_name"/>
+        <result property="realName" column="realname"/>
         <result property="password" column="password"/>
         <result property="roleId" column="role_id"/>
         <result property="roleName" column="role_name"/>
@@ -13,19 +14,19 @@
 
     <select id="login" parameterType="User" resultMap="UserResult">
         select u.id,u.user_name,u.password,r.role_id, r.role_name from
-        ssm_user  AS u
-        JOIN ssm_role AS r ON u.role_id = r.role_id
+        bj_user  AS u
+        JOIN bj_role AS r ON u.role_id = r.role_id
         where user_name=#{userName} and password=#{password} limit 1
     </select>
 
     <select id="findUsers" parameterType="Map" resultMap="UserResult">
-        select u.id,u.user_name,u.password,r.role_id, r.role_name from ssm_user AS u
-        JOIN ssm_role AS r ON u.role_id = r.role_id
+        select u.id,u.user_name,u.realname, u.password,r.role_id, r.role_name from bj_user AS u
+        JOIN bj_role AS r ON u.role_id = r.role_id
         <where>
             <if test="userName!=null and userName!='' ">
-                and user_name like #{userName}
+                and (user_name like #{userName} or realname like #{userName})
             </if>
-            AND <![CDATA[ id <> 2 ]]>
+            AND <![CDATA[ id <> 1 ]]> AND u.delete_flag = 0
         </where>
         <if test="start!=null and size!=null">
             limit #{start},#{size}
@@ -33,25 +34,28 @@
     </select>
 
     <select id="getTotalUser" parameterType="Map" resultType="Long">
-        select count(*) from ssm_user
+        select count(*) from bj_user
         <where>
             <if test="userName!=null and userName!='' ">
                 and user_name like #{userName}
             </if>
-            AND <![CDATA[ id <> 2 ]]>
+            AND <![CDATA[ id <> 1 ]]> AND delete_flag = 0
         </where>
     </select>
 
     <insert id="addUser" parameterType="User">
-        insert into ssm_user(user_name,password,role_id)
+        insert into bj_user(user_name,password,role_id)
         values(#{userName},#{password},#{roleId})
     </insert>
 
     <update id="updateUser" parameterType="User">
-        update ssm_user
+        update bj_user
         <set>
             <if test="userName!=null and userName!='' ">
                 user_name=#{userName},
+            </if>
+            <if test="realName != null and realName != '' ">
+                realname = #{realName},
             </if>
             <if test="password!=null and password!='' ">
                 password=#{password},
@@ -60,11 +64,15 @@
                 role_id = #{roleId}
             </if>
         </set>
-        where id=#{id} and <![CDATA[ id <> 2 ]]>
+        where id=#{id}
     </update>
 
-    <delete id="deleteUser" parameterType="Integer">
-        delete from ssm_user
-        where id=#{id}
-    </delete>
+    <update id="deleteUser" parameterType="Integer">
+        update bj_user
+        <set>
+            delete_flag = 0
+        </set>
+        where id = #{id}  AND <![CDATA[ id <> 1 ]]>
+    </update>
+
 </mapper> 

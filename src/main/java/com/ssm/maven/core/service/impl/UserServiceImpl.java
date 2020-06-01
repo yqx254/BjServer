@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public int deleteUser(Integer id) {
         //防止有人胡乱修改导致其他人无法正常登陆
-        if (2 == id) {
+        if (1 == id) {
             return 0;
         }
         return userDao.deleteUser(id);
