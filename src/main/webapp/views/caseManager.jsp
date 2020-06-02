@@ -39,7 +39,7 @@
             $.messager.confirm("系统提示", "您确认要删除这<font color=red>"
                 + selectedRows.length + "</font>条数据吗？", function (r) {
                 if (r) {
-                    $.post("${pageContext.request.contextPath}/user/delete.do", {
+                    $.post("${pageContext.request.contextPath}/case/delete.do", {
                         ids: ids
                     }, function (result) {
                         if (result.success) {
@@ -75,9 +75,13 @@
             });
         }
         function closeCase(){
-            var check = $("#dataSaveCheck").is(':checked');
-            alert(check);
-            $.messager.confirm("系统提示", "确定要结案吗", function (r) {
+            const check = $("#dataSaveCheck").is(':checked');
+            let tips = "确定要结案吗?";
+            if(check){
+                tips = "确定要结案，并移除当事人信息吗？"
+                url += "&clear=1";
+            }
+            $.messager.confirm("系统提示", tips, function (r) {
                 if (r) {
                     $.get(url, function (result) {
                         if (result.success) {
@@ -146,6 +150,7 @@
         <th field="categoryShow" width="100" align="center">类别</th>
         <th field="clientNameShow" width="100" align="center">委托人</th>
         <th field="opponentNameShow" width="100" align="center">对方当事人</th>
+        <th field="createName" width="100" align="center">录入人</th>
         <th field="dealer" width="100" align="center">承办人</th>
         <th field="statusShow" width="100" align="center">状态</th>
         <th field="id" width="100" formatter="rowFormatter">操作</th>
@@ -161,18 +166,26 @@
             iconCls="icon-remove" plain="true">删除</a>
     </div>
     <div>
-        &nbsp;案号：&nbsp;<input type="text" id="s_caseCode" size="20"
-                               onkeydown="if(event.keyCode===13) searchCase()"/> <a
-            href="javascript:searchCase()" class="easyui-linkbutton"
-            iconCls="icon-search" plain="true">搜索</a>
+        &nbsp;案号：&nbsp;<input type="text" id="s_caseCode" size="20" placeholder="请输入案号"
+                               onkeydown="if(event.keyCode===13) searchCase()"/>
+            委托人：<input type="text" id="s_client" size="20" placeholder="请输入委托人姓名"
+                   onkeydown="if(event.keyCode===13) searchCase()"/>
+            对方当事人：<input type="text" id="s_opponent" size="20" placeholder="请输入对方当事人姓名"
+                       onkeydown="if(event.keyCode===13) searchCase()"/>
+            录入人：<input type="text" id="s_create" size="20" placeholder="请输入录入人姓名或电话"
+                         onkeydown="if(event.keyCode===13) searchCase()"/>
+        <a href="javascript:searchCase()" class="easyui-linkbutton"
+                iconCls="icon-search" plain="true">搜索</a>
     </div>
 </div>
 <div id="caseClsDlg" class="easyui-dialog"
-     style="width: 250px;height:250px;padding: 10px 20px" closed="true"
+     style="width: 280px;height:170px;padding: 10px 20px" closed="true"
      buttons="#dlg-buttons">
-    <label>
-        <input type="checkbox"  id="dataSaveCheck"   />
-    </label>
+    <div class="messager-body">
+        <label>
+            <input type="checkbox"   id="dataSaveCheck"   />将当事人信息移出利冲校验
+        </label>
+    </div>
     <div id="caseClsDlg-buttons">
         <a href="javascript:closeCase()" class="easyui-linkbutton"
            iconCls="icon-ok">确定</a>
