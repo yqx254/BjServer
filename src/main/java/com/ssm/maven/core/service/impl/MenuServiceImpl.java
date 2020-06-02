@@ -13,7 +13,7 @@ import java.util.*;
  * @author fstar
  */
 @Service("MenuService")
-public class MenuServiceImp implements MenuService {
+public class MenuServiceImpl implements MenuService {
 
     @Resource
     private MenuDao menuDao;

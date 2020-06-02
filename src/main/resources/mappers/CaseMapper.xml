@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.maven.core.dao.CaseDao">
+    <resultMap id="myCase" type="Case">
+        <result property="id" column="id"/>
+        <result property="caseCode" column="case_code"/>
+        <result property="category" column="category"/>
+        <result property="clientName" column="client_name"/>
+        <result property="clientCount" column="client_count"/>
+        <result property="opponentName" column="opponent_name"/>
+        <result property="opponentCount" column="opponent_count"/>
+        <result property="dealer" column="dealer"/>
+        <result property="remarks" column="remarks"/>
+        <result property="status" column="status"/>
+        <result property="createId" column="create_id"/>
+        <result property="createTel" column="create_tel"/>
+        <result property="createName" column="create_name"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="getCase" parameterType="Map" resultMap="myCase"  >
+        SELECT * FROM bj_case
+        <where>
+            <if test="caseCode != null and caseCode != ''">
+                AND case_code = #{caseCode}
+            </if>
+            <if test="category != null">
+                AND category = #{category}
+            </if>
+            <if test="clientList != null and clientList.size() > 0">
+                AND id IN
+                <foreach collection="list" index="index" item="item"
+                         open ="(" close = ")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="opponentList != null and opponentList.size() > 0">
+                AND id IN
+                <foreach collection="list" index="index" item="item"
+                         open ="(" close = ")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="createkw != null and createkw != '' ">
+                AND ( create_name = #{createkw} OR create_tel = #{createkw})
+            </if>
+            AND create_id = #{createId}
+            AND delete_flag = 0
+        </where>
+        ORDER  BY created_at DESC
+        <if test="start!=null and size!=null">
+            LIMIT #{start},#{size}
+        </if>
+    </select>
+
+    <select id="getCaseCount"  parameterType="Map"  resultType="Long">
+        SELECT COUNT(*) FROM bj_case
+        <where>
+            <if test="caseCode != null and caseCode != ''">
+                AND case_code = #{caseCode}
+            </if>
+            <if test="category != null">
+                AND category = #{category}
+            </if>
+            <if test="clientList != null and clientList.size() > 0">
+                AND id IN
+                <foreach collection="list" index="index" item="item"
+                         open ="(" close = ")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="opponentList != null and opponentList.size() > 0">
+                AND id IN
+                <foreach collection="list" index="index" item="item"
+                         open ="(" close = ")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="createkw != null and createkw != '' ">
+                AND ( create_name = #{createkw} OR create_tel = #{createkw})
+            </if>
+            AND create_id = #{createId}
+            AND delete_flag = 0
+        </where>
+    </select>
+
+    <insert id="addCase" parameterType="Case">
+        INSERT INTO bj_case(
+        case_code, category, client_name, client_count,opponent_name,
+        opponent_count, dealer, remarks, status, create_id,created_at,updated_at
+        )VALUES(
+        #{caseCode},#{category},#{clientName},#{clientCount},#{opponentName},
+        #{opponentCount},#{dealer},#{remarks},#{status},#{createId},#{createdAt},
+        #{updatedAt}
+        )
+    </insert>
+
+    <update id="updateCase" parameterType="Case">
+        UPDATE  bj_case
+        <set>
+        <if test="clientName != null and clientName !='' ">
+            client_name = #{clientName},
+            client_count = #{clientCount},
+        </if>
+        <if test="opponentName != null and opponentName != '' ">
+            opponent_name = #{opponentName},
+            opponent_count = #{opponentCount},
+        </if>
+        <if test="dealer != null and dealer != '' ">
+            dealer = #{dealer},
+        </if>
+        <if test="remarks != null and remarks != '' ">
+            remarks = #{remarks}，
+        </if>
+            updated_at = #{updatedAt}
+        </set>
+            WHERE id = #{id}
+    </update>
+
+    <update id="solveCase" parameterType="Integer">
+        UPDATE bj_case
+        <set>
+            status = 2
+        </set>
+            WHERE id = #{id}
+    </update>
+
+    <update id="deleteCase" parameterType="Integer">
+     UPDATE bj_case
+     SET delete_flag = 2
+     WHERE id = #{id}
+    </update>
+
+</mapper>
