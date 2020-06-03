@@ -2,18 +2,32 @@ CREATE TABLE `bj_case` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '案件表主键',
   `case_code` varchar(63) DEFAULT NULL COMMENT '案号',
   `category` tinyint DEFAULT NULL COMMENT '案件类型 0-民事 1-刑事 2-行政 3-顾问 4-其他',
+  `client_name` varchar(63) DEFAULT NULL COMMENT '第一个委托人姓名（冗余）',
+  `client_count` int DEFAULT '1' COMMENT '委托人数量',
+  `opponent_name` varchar(63) DEFAULT NULL COMMENT '第一个对方当事人姓名（冗余）',
+  `opponent_count` int DEFAULT '1' COMMENT '对方当事人数量',
   `dealer` varchar(255) DEFAULT NULL COMMENT '承办人',
   `remarks` text COMMENT '备注',
-  `status` tinyint DEFAULT NULL COMMENT '状态 1-未结案 2-结案',
+  `status` tinyint DEFAULT '1' COMMENT '状态 1-未结案 2-结案',
   `create_id` int DEFAULT NULL COMMENT '创建人',
+  `create_tel` varchar(63) DEFAULT NULL COMMENT '创建人电话',
+  `create_name` varchar(63) DEFAULT NULL COMMENT '创建人姓名',
   `created_at` int DEFAULT NULL COMMENT '创建时间',
   `updated_at` int DEFAULT NULL COMMENT '更新时间',
   `delete_flag` tinyint DEFAULT '0' COMMENT '删除标志',
   PRIMARY KEY (`id`),
   UNIQUE KEY `case_code_idx` (`case_code`) USING BTREE COMMENT '案号索引',
   KEY `category_idx` (`category`) USING BTREE COMMENT '类型索引',
-  KEY `create_id_idx` (`id`) USING BTREE COMMENT '创建人索引'
+  KEY `create_idx` (`create_id`,`create_tel`,`create_name`) USING BTREE COMMENT '创建人索引'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='案件信息表';
+
+INSERT INTO `bjcase`.`bj_case`(`id`, `case_code`, `category`, `client_name`, `client_count`, `opponent_name`, `opponent_count`, `dealer`, `remarks`, `status`, `create_id`, `create_tel`, `create_name`, `created_at`, `updated_at`, `delete_flag`) VALUES (1, 'BJM202006001', 0, '大骗子', 1, '受害者', 1, '我自己', NULL, 1, 2, '15812071547', '平民3', 1591079736, 1591079736, 0);
+INSERT INTO `bjcase`.`bj_case`(`id`, `case_code`, `category`, `client_name`, `client_count`, `opponent_name`, `opponent_count`, `dealer`, `remarks`, `status`, `create_id`, `create_tel`, `create_name`, `created_at`, `updated_at`, `delete_flag`) VALUES (2, 'BJM202006002', 0, '超级骗子', 2, '受害者', 2, '正义律师', NULL, 1, 1, '000', 'admin', 1591079736, 1591079736, 0);
+INSERT INTO `bjcase`.`bj_case`(`id`, `case_code`, `category`, `client_name`, `client_count`, `opponent_name`, `opponent_count`, `dealer`, `remarks`, `status`, `create_id`, `create_tel`, `create_name`, `created_at`, `updated_at`, `delete_flag`) VALUES (21, NULL, 0, '1', 2, '2', 1, '大律师', '备注', 2, 1, NULL, NULL, 0, 0, 2);
+INSERT INTO `bjcase`.`bj_case`(`id`, `case_code`, `category`, `client_name`, `client_count`, `opponent_name`, `opponent_count`, `dealer`, `remarks`, `status`, `create_id`, `create_tel`, `create_name`, `created_at`, `updated_at`, `delete_flag`) VALUES (22, NULL, 2, 'lkaoda', 1, 'hahaha', 1, '大律师2', '22', 1, 1, 'admin', NULL, 0, 0, 2);
+INSERT INTO `bjcase`.`bj_case`(`id`, `case_code`, `category`, `client_name`, `client_count`, `opponent_name`, `opponent_count`, `dealer`, `remarks`, `status`, `create_id`, `create_tel`, `create_name`, `created_at`, `updated_at`, `delete_flag`) VALUES (23, NULL, 4, 'dd', 1, 'ff', 1, '大律师3', 'dd', 1, 1, 'admin', '权限狗', 0, 0, 0);
+INSERT INTO `bjcase`.`bj_case`(`id`, `case_code`, `category`, `client_name`, `client_count`, `opponent_name`, `opponent_count`, `dealer`, `remarks`, `status`, `create_id`, `create_tel`, `create_name`, `created_at`, `updated_at`, `delete_flag`) VALUES (24, NULL, 3, '大客户', 1, '啊啊', 1, '大律师', '备注', 2, 1, 'admin', '权限狗', 1591174084, 1591174084, 0);
+
 
 CREATE TABLE `bj_client` (
   `client_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '客户ID',
