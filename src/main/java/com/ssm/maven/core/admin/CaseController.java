@@ -121,8 +121,8 @@ public class CaseController {
                          HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         String[] idsStr = ids.split(",");
-        for (int i = 0; i < idsStr.length; i++) {
-            caseService.deleteCase(Integer.parseInt(idsStr[i]));
+        for (String s : idsStr) {
+            caseService.deleteCase(Integer.parseInt(s));
         }
         result.put("success", true);
         log.info("request: case/delete , ids: " + ids);
@@ -135,12 +135,7 @@ public class CaseController {
                         HttpServletResponse response) throws Exception{
         JSONObject result = new JSONObject();
         int res = caseService.solveCase(Integer.parseInt(id));
-        if(res > 0){
-            result.put("success", true);
-        }
-        else{
-            result.put("success", false);
-        }
+        result.put("success", res > 0);
         ResponseUtil.write(response, result);
         return null;
     }

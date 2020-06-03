@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * @author fstar
  */
-public class Case implements Serializable {
+    public class Case implements Serializable {
     private String id;
     private String caseCode;
     private String clientName;

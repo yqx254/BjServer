@@ -33,6 +33,7 @@
             <tx:method name="del*" propagation="REQUIRED"/>
             <tx:method name="change*" propagation="REQUIRED"/>
             <tx:method name="check*" propagation="REQUIRED"/>
+            <tx:method name="solve*" propagation="REQUIRED"/>
             <tx:method name="get*" propagation="REQUIRED" read-only="true"/>
             <tx:method name="search*" propagation="REQUIRED" read-only="true"/>
             <tx:method name="find*" propagation="REQUIRED" read-only="true"/>

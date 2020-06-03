@@ -95,6 +95,7 @@
                     }, function (result) {
                         if (result.success) {
                             $.messager.alert("系统提示", "结案成功！");
+                            $("#caseClsDlg").dialog("close");
                             $("#dg").datagrid("reload");
                         } else {
                             $.messager.alert("系统提示", "数据操作失败！");
@@ -106,7 +107,7 @@
 
         function openCaseModifyDialog() {
             var selectedRows = $("#dg").datagrid('getSelections');
-            if (selectedRows.length != 1) {
+            if (selectedRows.length !== 1) {
                 $.messager.alert("系统提示", "请选择一条要编辑的数据！");
                 return;
             }
