@@ -130,7 +130,7 @@ public class CaseController {
         return null;
     }
 
-    @RequestMapping("solve")
+    @RequestMapping("/solve")
     public String solve(@RequestParam(value = "id") String id,
                         HttpServletResponse response) throws Exception{
         JSONObject result = new JSONObject();

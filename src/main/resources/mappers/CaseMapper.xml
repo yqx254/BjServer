@@ -124,10 +124,8 @@
 
     <update id="solveCase" parameterType="Integer">
         UPDATE bj_case
-        <set>
-            status = 2
-        </set>
-            WHERE id = #{id}
+        SET status = 2
+         WHERE id = #{id}
     </update>
 
     <update id="deleteCase" parameterType="Integer">
