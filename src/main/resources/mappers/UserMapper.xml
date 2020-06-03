@@ -13,7 +13,7 @@
     </resultMap>
 
     <select id="login" parameterType="User" resultMap="UserResult">
-        select u.id,u.user_name,u.password,r.role_id, r.role_name from
+        select u.id,u.user_name,u.realname,u.password,r.role_id, r.role_name from
         bj_user  AS u
         JOIN bj_role AS r ON u.role_id = r.role_id
         where user_name=#{userName} and password=#{password} limit 1

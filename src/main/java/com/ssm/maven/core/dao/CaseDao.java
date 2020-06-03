@@ -26,8 +26,9 @@ public interface CaseDao {
     /**
      * 新增案件
      * @param newCase 案件实体
+     * @return 插入结果
      */
-    void addCase(Case newCase);
+    int addCase(Case newCase);
     /**
      *  更新案件信息
      * @param newCase 案件实体
@@ -37,8 +38,9 @@ public interface CaseDao {
     /**
      *  结案
      * @param id 案件id
+     * @return 结果
      */
-    void solveCase(Integer id);
+    int solveCase(Integer id);
 
     /**
      *  删除

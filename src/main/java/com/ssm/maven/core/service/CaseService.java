@@ -28,7 +28,7 @@ public interface CaseService {
      * 新建案件
      * @param newCase 新的案件
      */
-    void addCase(Case newCase);
+    int addCase(Case newCase);
 
     /**
      * 更新案件信息
@@ -46,5 +46,5 @@ public interface CaseService {
      * 结案
      * @param caseId 案件编号
      */
-    void solveCase(Integer caseId);
+    int solveCase(Integer caseId);
 }

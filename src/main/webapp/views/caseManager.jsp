@@ -18,10 +18,16 @@
             src="${pageContext.request.contextPath}/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript">
         var url;
+        let clCnt = 1;
+        let opCnt = 1;
+        let currentId = 0;
 
         function searchCase() {
             $("#dg").datagrid('load', {
-                "userName": $("#s_userName").val()
+                "caseCode": $("#s_caseCode").val(),
+                "client": $("#s_client").val(),
+                "opponent": $("#s_opponent").val(),
+                "createKW": $("#s_create").val()
             });
         }
 
@@ -51,16 +57,15 @@
                     }, "json");
                 }
             });
-
         }
 
         function openCaseAddDialog() {
-            $("#dlg").dialog("open").dialog("setTitle", "添加用户信息");
-            url = "${pageContext.request.contextPath}/user/save.do";
+            $("#dlg").dialog("open").dialog("setTitle", "新增");
+            url = "${pageContext.request.contextPath}/case/add.do";
             $("#roleId").combobox("select","");
         }
 
-        function saveUser() {
+        function saveCase() {
             $("#fm").form("submit", {
                 url: url,
                 onSubmit: function () {
@@ -77,15 +82,19 @@
         function closeCase(){
             const check = $("#dataSaveCheck").is(':checked');
             let tips = "确定要结案吗?";
+            let clear = 0;
             if(check){
                 tips = "确定要结案，并移除当事人信息吗？"
-                url += "&clear=1";
+               clear = 1;
             }
             $.messager.confirm("系统提示", tips, function (r) {
                 if (r) {
-                    $.get(url, function (result) {
+                    $.post(url, {
+                        id: currentId,
+                        clear : clear
+                    }, function (result) {
                         if (result.success) {
-                            $.messager.alert("系统提示", "结案成功");
+                            $.messager.alert("系统提示", "结案成功！");
                             $("#dg").datagrid("reload");
                         } else {
                             $.messager.alert("系统提示", "数据操作失败！");
@@ -109,32 +118,106 @@
         }
         function openCaseCloseDialog(idx){
             $("#caseClsDlg").dialog("open").dialog("setTitle", "结案");
-            url = "${pageContext.request.contextPath}/case/solve.do?id=" + idx;
+            url = "${pageContext.request.contextPath}/case/solve.do";
+            currentId = idx;
         }
         function resetValue() {
-            $("#userName").val("");
-            $("#password").val("");
+            $("#cl").val("");
+            $("#op").val("");
+            $("#category").val("");
+            $("#clIdx").val("");
+            $("#opIdx").val("");
+            $("#dealer").val("");
+            $("#remarks").val("");
+            let i = 1;
+            for(;i <= clCnt; i ++){
+                $("#cl-" + i).remove();
+            }
+            let j = 1;
+            for(;j <= opCnt; j ++){
+                $("#op-" + j).remove();
+            }
         }
 
         function closeCaseDialog() {
             $("#caseClsDlg").dialog("close");
         }
-        function rowFormatter(value, row, index) {
-
-            return '<a href="javascript:openCaseEditDialog(' + value +')" >编辑</a> ' + '   ' +
-                '<a href="javascript:openCaseCloseDialog(' + value + ')">结案</a> ';
-
+        function closeAddDialog(){
+            $("#dlg").dialog("close");
         }
-        $(function(){
-            $("#roleId").combobox({
-                url : "${pageContext.request.contextPath}/role/roleConfig.do",
-                method: "get",
-                valueField: "roleId",
-                textField: "roleName",
-                required : true,
-                editable : false,
-            });
-        })
+        function rowFormatter(value, row, index) {
+            if(row.status == 1){
+                return '<a href="javascript:openCaseEditDialog(' + value +')" >编辑</a> ' + '   ' +
+                    '<a href="javascript:openCaseCloseDialog(' + value + ')">结案</a> ';
+            }
+          }
+        function addrows(){
+            var clientTr;
+            if(clCnt == 1){
+                clientTr    = $("#client");
+            }
+            else{
+                clientTr = $("#cl-" + (clCnt - 1));
+            }
+            var tr = "<tr id=\"cl-" + clCnt + "\">"+
+                "               <td>委托人：</td>\n" +
+                "                <td>\n" +
+                "                    <input type=\"text\"  name=\"clientNameArr\"\n" +
+                "                           class=\"easyui-validatebox\" required=\"true\"/>&nbsp;<font\n" +
+                "                        color=\"red\">*</font>\n" +
+                "<select name=\"clientIdtArr\" class=\"easyui-combobox\"  style=\"width:60px;\" editable=\"false\">"+
+                "<option value=\"0\">原告</option>" +
+                "<option value=\"1\">被告</option>" +
+                "<option value=\"2\">原告人</option>" +
+                "<option value=\"3\">被告人</option>" +
+                "<option value=\"4\">第三人</option>" +
+                "<option value=\"5\">顾问单位</option>"+
+                "</select> " +
+                "                </td>" +
+                "</tr>";
+            $(tr).insertAfter(clientTr);
+            clCnt ++;
+        }
+        function deleterow(){
+            $("#cl-" + (clCnt - 1)).remove();
+            if(clCnt > 1){
+                clCnt --;
+            }
+        }
+        function addrows2(){
+            var opponentTr;
+            if(opCnt == 1){
+                opponentTr = $("#opponent");
+            }
+            else{
+                opponentTr = $("#op-" + (opCnt - 1));
+            }
+
+            var tr = "<tr id=\"op-" + opCnt + "\">"+
+                "               <td>对方当事人：</td>\n" +
+                "                <td>\n" +
+                "                    <input type=\"text\"  name=\"opponentNameArr\"\n" +
+                "                           class=\"easyui-validatebox\" required=\"true\"/>&nbsp;<font\n" +
+                "                        color=\"red\">*</font>\n" +
+                "<select name=\"opponentIdtArr\" class=\"easyui-combobox\"  style=\"width:60px;\" editable=\"false\">"+
+                "<option value=\"0\">原告</option>" +
+                "<option value=\"1\">被告</option>" +
+                "<option value=\"2\">原告人</option>" +
+                "<option value=\"3\">被告人</option>" +
+                "<option value=\"4\">第三人</option>" +
+                "<option value=\"5\">顾问单位</option>"+
+                "</select> " +
+                "                </td>" +
+                "</tr>";
+            $(tr).insertAfter(opponentTr);
+            opCnt ++;
+        }
+        function deleterow2(){
+            $("#op-" + (opCnt - 1)).remove();
+            if(opCnt > 1){
+                opCnt--;
+            }
+        }
     </script>
 </head>
 <body style="margin:1px;">
@@ -197,41 +280,74 @@
      style="width: 620px;height:250px;padding: 10px 20px" closed="true"
      buttons="#dlg-buttons">
     <form id="fm" method="post">
-        <table cellspacing="8px">
+        <table id="addTable" cellspacing="8px">
             <tr>
-                <td>用户名：</td>
-                <td><input type="text" id="userName" name="userName"
-                           class="easyui-validatebox" required="true"/>&nbsp;<font
-                        color="red">*</font>
-                </td>
-            </tr>
-            <tr>
-                <td>用户名：</td>
-                <td><input type="text" id="realName" name="realName"
-                           class="easyui-validatebox" required="true"/>&nbsp;<font
-                        color="red">*</font>
-                </td>
-            </tr>
-            <tr>
-                <td>密码：</td>
-                <td><input type="password" id="password" name="password"
-                           class="easyui-validatebox" required="true"/>&nbsp;<span
-                        style="color: red; ">*</span>
-                </td>
-            </tr>
-            <tr>
-                <td>角色：</td>
+                <td>类型：</td>
                 <td>
-                    <input id="roleId" class="easyui-combobox" name="roleId" editable="false" value="请选择角色">
-                    <span style="color: red; ">*</span>
+                    <select id="category" name="category" class="easyui-combobox" editable="false"  style="width:200px;">
+                        <option value="0">民事</option>
+                        <option value="1">刑事</option>
+                        <option value="2">行政</option>
+                        <option value="3">顾问</option>
+                        <option value="4">其他</option>
+                    </select>
+                </td>
+            </tr>
+            <tr id="client">
+                    <td>委托人：</td>
+                    <td>
+                        <input type="text"  name="clientNameArr" id="cl"
+                               class="easyui-validatebox" required="true"/>&nbsp;<font
+                            color="red">*</font>
+                        <select id="clIdx" name="clientIdtArr" class="easyui-combobox"  editable="false" style="width:60px;" required="true">
+                            <option value="0">原告</option>
+                            <option value="1">被告</option>
+                            <option value="2">原告人</option>
+                            <option value="3">被告人</option>
+                            <option value="4">第三人</option>
+                            <option value="5">顾问单位</option>
+                        </select>
+                        <input type="button"  value="添加" onClick="addrows();">
+                        <input type="button"  value="删除" onClick="deleterow();">
+                    </td>
+            </tr>
+            <tr id="opponent">
+                <td>对方当事人：</td>
+                <td>
+                    <input type="text"  name="opponentNameArr" id="op"
+                           class="easyui-validatebox" />&nbsp;
+                    <select id="opIdx" name="opponentIdtArr" class="easyui-combobox"  editable="false" style="width:60px;" required="true">
+                        <option value="0">原告</option>
+                        <option value="1">被告</option>
+                        <option value="2">原告人</option>
+                        <option value="3">被告人</option>
+                        <option value="4">第三人</option>
+                        <option value="5">顾问单位</option>
+                    </select>
+                    <input type="button"  value="添加" onClick="addrows2();">
+                    <input type="button"  value="删除" onClick="deleterow2();">
+                </td>
+            </tr>
+            <tr>
+                <td>承办人：</td>
+                <td>
+                    <input type="text"  name="dealer"
+                           class="easyui-validatebox" />
+                </td>
+            </tr>
+            <tr>
+                <td>备注：</td>
+                <td>
+                    <input type="text"  name="remarks"
+                           class="easyui-validatebox" />
                 </td>
             </tr>
         </table>
     </form>
 </div>
 <div id="dlg-buttons">
-    <a href="javascript:saveUser()" class="easyui-linkbutton"
-       iconCls="icon-ok">保存</a> <a href="javascript:closeUserDialog()"
+    <a href="javascript:saveCase()" class="easyui-linkbutton"
+       iconCls="icon-ok">保存</a> <a href="javascript:closeAddDialog()"
                                    class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 </body>

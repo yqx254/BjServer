@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,76 @@ public class CaseController {
         result.put("rows", JSONArray.fromObject(list));
         result.put("total", caseService.getCaseCount(map));
         ResponseUtil.write(response,result);
+        return null;
+    }
+
+    @RequestMapping("/add")
+    public String addCase(Case myCase,
+                          HttpServletResponse response,
+                          HttpServletRequest request) throws Exception {
+        //TODO: 查重
+        //TODO: 录入客户信息
+        //TODO: 生成案号
+        JSONObject result = new JSONObject();
+        HttpSession session = request.getSession();
+        User user = (User)session.getAttribute("currentUser");
+        if(user.getId() == null){
+            return "login";
+        }
+        long time = System.currentTimeMillis() / 1000;
+        myCase.setCreateId(user.getId());
+        myCase.setCreateTel(user.getUserName());
+        myCase.setCreateName(user.getRealName());
+        myCase.setCreatedAt(time);
+        myCase.setUpdatedAt(time);
+        if(myCase.getClientNameArr()[0] == null || "".equals(myCase.getClientNameArr()[0])){
+            result.put("success", false);
+            ResponseUtil.write(response, result);
+            log.error("委托人信息为空");
+        }
+        myCase.setClientName(myCase.getClientNameArr()[0]);
+        myCase.setClientCount(myCase.getClientNameArr().length);
+        if(myCase.getOpponentNameArr().length > 0){
+            myCase.setOpponentName(myCase.getOpponentNameArr()[0]);
+        }
+        myCase.setOpponentCount(myCase.getOpponentNameArr().length);
+        int re = caseService.addCase(myCase);
+        if(re > 0){
+            result.put("success", true);
+        }
+        else{
+            result.put("success", false);
+        }
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    @RequestMapping("/delete")
+    public String delete(@RequestParam(value = "ids") String ids,
+                         HttpServletResponse response) throws Exception {
+        JSONObject result = new JSONObject();
+        String[] idsStr = ids.split(",");
+        for (int i = 0; i < idsStr.length; i++) {
+            caseService.deleteCase(Integer.parseInt(idsStr[i]));
+        }
+        result.put("success", true);
+        log.info("request: case/delete , ids: " + ids);
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    @RequestMapping("solve")
+    public String solve(@RequestParam(value = "id") String id,
+                        HttpServletResponse response) throws Exception{
+        JSONObject result = new JSONObject();
+        int res = caseService.solveCase(Integer.parseInt(id));
+        if(res > 0){
+            result.put("success", true);
+        }
+        else{
+            result.put("success", false);
+        }
+        ResponseUtil.write(response, result);
         return null;
     }
 }

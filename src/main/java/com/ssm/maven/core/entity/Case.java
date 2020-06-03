@@ -10,6 +10,10 @@ public class Case implements Serializable {
     private String caseCode;
     private String clientName;
     private String opponentName;
+    private String [] clientNameArr;
+    private String [] opponentNameArr;
+    private int [] clientIdtArr;
+    private int [] opponentIdtArr;
     private int clientCount;
     private int opponentCount;
     private int category;
@@ -232,5 +236,37 @@ public class Case implements Serializable {
 
     public void setStatusShow(String statusShow) {
         this.statusShow = statusShow;
+    }
+
+    public void setClientIdtArr(int[] clientIdtArr) {
+        this.clientIdtArr = clientIdtArr;
+    }
+
+    public int[] getClientIdtArr() {
+        return clientIdtArr;
+    }
+
+    public void setClientNameArr(String[] clientNameArr) {
+        this.clientNameArr = clientNameArr;
+    }
+
+    public String[] getClientNameArr() {
+        return clientNameArr;
+    }
+
+    public void setOpponentIdtArr(int[] opponentIdtArr) {
+        this.opponentIdtArr = opponentIdtArr;
+    }
+
+    public int[] getOpponentIdtArr() {
+        return opponentIdtArr;
+    }
+
+    public void setOpponentNameArr(String[] opponentNameArr) {
+        this.opponentNameArr = opponentNameArr;
+    }
+
+    public String[] getOpponentNameArr() {
+        return opponentNameArr;
     }
 }

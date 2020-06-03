@@ -47,7 +47,9 @@
             <if test="createkw != null and createkw != '' ">
                 AND ( create_name = #{createkw} OR create_tel = #{createkw})
             </if>
-            AND create_id = #{createId}
+            <if test="createId != 1">
+                AND create_id = #{createId}
+            </if>
             AND delete_flag = 0
         </where>
         ORDER  BY created_at DESC
@@ -90,11 +92,11 @@
     <insert id="addCase" parameterType="Case">
         INSERT INTO bj_case(
         case_code, category, client_name, client_count,opponent_name,
-        opponent_count, dealer, remarks, status, create_id,created_at,updated_at
+        opponent_count, dealer, remarks, create_id,create_tel,create_name,created_at,updated_at
         )VALUES(
         #{caseCode},#{category},#{clientName},#{clientCount},#{opponentName},
-        #{opponentCount},#{dealer},#{remarks},#{status},#{createId},#{createdAt},
-        #{updatedAt}
+        #{opponentCount},#{dealer},#{remarks},#{createId},#{createTel},#{createName},
+        #{createdAt},#{updatedAt}
         )
     </insert>
 

@@ -45,8 +45,8 @@ public class CaseServiceImpl implements CaseService {
      * @param newCase 新的案件
      */
     @Override
-    public void addCase(Case newCase) {
-        caseDao.addCase(newCase);
+    public int addCase(Case newCase) {
+        return caseDao.addCase(newCase);
     }
 
     /**
@@ -75,8 +75,8 @@ public class CaseServiceImpl implements CaseService {
      * @param caseId 案件编号
      */
     @Override
-    public void solveCase(Integer caseId) {
-        caseDao.solveCase(caseId);
+    public int solveCase(Integer caseId) {
+        return caseDao.solveCase(caseId);
     }
 
 
