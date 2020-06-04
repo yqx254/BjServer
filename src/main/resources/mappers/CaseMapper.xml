@@ -97,6 +97,12 @@
         </where>
     </select>
 
+    <select id="caseDetail" parameterType="String" resultMap="myCase" >
+        SELECT id,case_code, category, dealer, remarks
+        FROM bj_case
+        WHERE id = #{id}
+    </select>
+
     <insert id="addCase" useGeneratedKeys="true" keyProperty="id"  parameterType="Case">
         INSERT INTO bj_case(
         case_code, category, client_name, client_count,opponent_name,

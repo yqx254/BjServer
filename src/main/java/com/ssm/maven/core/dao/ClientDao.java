@@ -53,4 +53,7 @@ public interface ClientDao {
      * @return id list
      */
     List<Integer>findCaseOp(String clientName);
+
+
+    List<Client> clientsByCase(String caseId);
 }

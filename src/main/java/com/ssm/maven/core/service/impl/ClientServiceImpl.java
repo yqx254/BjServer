@@ -50,4 +50,9 @@ public class ClientServiceImpl implements ClientService {
     public List<Integer> findCaseOp(String clientName) {
         return clientDao.findCaseOp(clientName);
     }
+
+    @Override
+    public List<Client> clientsByCase(String caseId) {
+        return clientDao.clientsByCase(caseId);
+    }
 }

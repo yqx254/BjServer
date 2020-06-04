@@ -59,6 +59,11 @@ public class CaseServiceImpl implements CaseService {
         caseDao.updateCase(oldCase);
     }
 
+    @Override
+    public Case caseDetail(String id) {
+        return caseDao.caseDetail(id);
+    }
+
     /**
      * 删除案件
      *

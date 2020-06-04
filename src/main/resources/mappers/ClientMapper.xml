@@ -73,4 +73,10 @@
         DELETE FROM bj_client
         WHERE id = #{id}
     </delete>
+
+    <select id="getClients" resultMap="client" parameterType="String">
+        SELECT client_name,identity FROM bj_client
+        WHERE case_id = ${caseId}
+    </select>
+
 </mapper>

@@ -22,4 +22,6 @@ public interface ClientService {
     List<Integer> findCase(String clientName);
 
     List<Integer> findCaseOp(String clientName);
+
+    List<Client> clientsByCase(String caseId);
 }

@@ -24,6 +24,12 @@ public interface CaseDao {
     Long getCaseCount(Map<String, Object> map);
 
     /**
+     * 获取案件详情
+     * @param id 案件id
+     * @return 案件
+     */
+    Case caseDetail(String id);
+    /**
      * 新增案件
      * @param newCase 案件实体
      * @return 插入结果
