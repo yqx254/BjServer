@@ -73,4 +73,10 @@
         DELETE FROM bj_client
         WHERE id = #{id}
     </delete>
+
+    <update id="solveClient" parameterType="Integer">
+        UPDATE bj_client
+        SET status = 1
+        WHERE case_id = #{caseId}
+    </update>
 </mapper>

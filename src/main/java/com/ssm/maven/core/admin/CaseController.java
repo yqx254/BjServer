@@ -6,6 +6,7 @@ import com.ssm.maven.core.entity.PageBean;
 import com.ssm.maven.core.entity.User;
 import com.ssm.maven.core.service.CaseService;
 import com.ssm.maven.core.service.ClientService;
+import com.ssm.maven.core.service.ConfigService;
 import com.ssm.maven.core.util.ResponseUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -34,6 +35,9 @@ public class CaseController {
 
     @Resource
     private ClientService clientService;
+
+    @Resource
+    private ConfigService configService;
 
     private static final Logger log = Logger.getLogger(CaseController.class);
 
@@ -81,7 +85,6 @@ public class CaseController {
     public String addCase(Case myCase,
                           HttpServletResponse response,
                           HttpServletRequest request) throws Exception {
-        //TODO: 生成案号
         JSONObject result = new JSONObject();
         HttpSession session = request.getSession();
         User user = (User)session.getAttribute("currentUser");
@@ -89,6 +92,14 @@ public class CaseController {
             return "login";
         }
         long time = System.currentTimeMillis() / 1000;
+        String caseCode = configService.setThenGetCaseCode(myCase.getCategory());
+        if(caseCode == null || "".equals(caseCode)){
+            result.put("success", false);
+            result.put("msg", "案号生成失败，请重试");
+            ResponseUtil.write(response, result);
+            log.error("案号生成失败");
+        }
+        myCase.setCaseCode(caseCode);
         myCase.setCreateId(user.getId());
         myCase.setCreateTel(user.getUserName());
         myCase.setCreateName(user.getRealName());
@@ -110,7 +121,7 @@ public class CaseController {
         for (String s : nameArr) {
             Client client = clientService.conflictCheckClient(s);
             if (client != null) {
-                String msg = "与" + client.getCaseCode() + "存在利冲，承办人"
+                String msg = "与案件" + client.getCaseCode() + "存在利冲，承办人"
                         + client.getRealName() + ",请核实";
                 result.put("success", false);
                 result.put("msg", msg);
@@ -126,7 +137,7 @@ public class CaseController {
             for(String s : opNameArr){
                 Client client = clientService.conflictCheckOpponent(s);
                 if (client != null) {
-                    String msg = "与" + client.getCaseCode() + "存在利冲，承办人"
+                    String msg = "与案件" + client.getCaseCode() + "存在利冲，承办人"
                             + client.getRealName() + ",请核实";
                     result.put("success", false);
                     result.put("msg", msg);
@@ -146,6 +157,7 @@ public class CaseController {
         for(int i = 0; i < nameArr.length; i ++){
             Client client = new Client();
             client.setCaseId(myCase.getId());
+            client.setCaseCode(caseCode);
             client.setClientName(nameArr[i]);
             client.setIdentity(0);
             client.setClientType(idtArr[i]);
@@ -159,6 +171,7 @@ public class CaseController {
             }
             Client client = new Client();
             client.setCaseId(myCase.getId());
+            client.setCaseCode(caseCode);
             client.setClientName(opNameArr[j]);
             client.setIdentity(1);
             client.setClientType(opIdtArr[j]);
@@ -190,6 +203,7 @@ public class CaseController {
                         HttpServletResponse response) throws Exception{
         JSONObject result = new JSONObject();
         int res = caseService.solveCase(Integer.parseInt(id));
+        clientService.solveClient(Integer.parseInt(id));
         result.put("success", res > 0);
         ResponseUtil.write(response, result);
         return null;

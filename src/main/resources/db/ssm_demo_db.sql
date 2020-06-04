@@ -92,3 +92,20 @@ CREATE TABLE `bj_user` (
 INSERT INTO `bjcase`.`bj_user`(`id`, `user_name`, `password`, `realname`, `role_id`, `delete_flag`) VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '权限狗', 1, 0);
 INSERT INTO `bjcase`.`bj_user`(`id`, `user_name`, `password`, `realname`, `role_id`, `delete_flag`) VALUES (2, '15812071547', 'e10adc3949ba59abbe56e057f20f883e', '平民1', 2, 0);
 INSERT INTO `bjcase`.`bj_user`(`id`, `user_name`, `password`, `realname`, `role_id`, `delete_flag`) VALUES (3, '15877948460', 'c33367701511b4f6020ec61ded352059', '平民2', 2, 0);
+
+
+CREATE TABLE `bj_config` (
+  `config_id` int NOT NULL AUTO_INCREMENT COMMENT '配置ID',
+  `config_name` varchar(63) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '配置名',
+  `config_value` varchar(63) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '配置值',
+  `config_type` tinyint DEFAULT '1' COMMENT '配置类型 1-分类案件编号 2-月份',
+  PRIMARY KEY (`config_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='配置表';
+
+INSERT INTO `bjcase`.`bj_config`(`config_id`, `config_name`, `config_value`, `config_type`) VALUES (1, 'm', 1, 1);
+INSERT INTO `bjcase`.`bj_config`(`config_id`, `config_name`, `config_value`, `config_type`) VALUES (2, 'x', 1, 1);
+INSERT INTO `bjcase`.`bj_config`(`config_id`, `config_name`, `config_value`, `config_type`) VALUES (3, 'xz', 1, 1);
+INSERT INTO `bjcase`.`bj_config`(`config_id`, `config_name`, `config_value`, `config_type`) VALUES (4, 'g', 1, 1);
+INSERT INTO `bjcase`.`bj_config`(`config_id`, `config_name`, `config_value`, `config_type`) VALUES (5, 'q', 1, 1);
+INSERT INTO `bjcase`.`bj_config`(`config_id`, `config_name`, `config_value`, `config_type`) VALUES (6, 'month', 6, 2);
+

@@ -28,6 +28,7 @@
             <tx:method name="add*" propagation="REQUIRED"/>
             <tx:method name="new*" propagation="REQUIRED"/>
             <tx:method name="set*" propagation="REQUIRED"/>
+            <tx:method name="reset*" propagation="REQUIRED"/>
             <tx:method name="remove*" propagation="REQUIRED"/>
             <tx:method name="delete*" propagation="REQUIRED"/>
             <tx:method name="del*" propagation="REQUIRED"/>

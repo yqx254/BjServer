@@ -42,6 +42,11 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public int solveClient(int caseId) {
+        return clientDao.solveClient(caseId);
+    }
+
+    @Override
     public List<Integer> findCase(String clientName) {
         return clientDao.findCase(clientName);
     }

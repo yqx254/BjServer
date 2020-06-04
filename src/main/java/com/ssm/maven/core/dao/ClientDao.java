@@ -53,4 +53,11 @@ public interface ClientDao {
      * @return id list
      */
     List<Integer>findCaseOp(String clientName);
+
+    /**
+     * 结案并将数据移除校验
+     * @param caseId 案件id
+     * @return 操作结果
+     */
+    int solveClient(int caseId);
 }

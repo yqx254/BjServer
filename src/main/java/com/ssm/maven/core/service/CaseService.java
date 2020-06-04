@@ -45,6 +45,7 @@ public interface CaseService {
     /**
      * 结案
      * @param caseId 案件编号
+     * @return 操作结果
      */
     int solveCase(Integer caseId);
 }
