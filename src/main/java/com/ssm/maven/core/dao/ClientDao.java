@@ -31,7 +31,7 @@ public interface ClientDao {
      * @param client 委托人信息
      * @return 操作结果
      */
-    int addClients(Client client);
+    int addClient(Client client);
 
     /**
      * 删除委托人
@@ -39,4 +39,18 @@ public interface ClientDao {
      * @return 操作结果
      */
     int deleteClients(int id);
+
+    /**
+     *  查询相关的案件id
+     * @param clientName 委托人姓名
+     * @return id list
+     */
+    List<Integer> findCase(String clientName);
+
+    /**
+     *  查询对方当事人相关的案件id
+     * @param clientName 对方当事人姓名
+     * @return id list
+     */
+    List<Integer>findCaseOp(String clientName);
 }

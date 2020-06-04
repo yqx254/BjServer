@@ -68,14 +68,21 @@
         function saveCase() {
             $("#fm").form("submit", {
                 url: url,
+                dataType : "json",
                 onSubmit: function () {
                     return $(this).form("validate");
                 },
                 success: function (result) {
-                    $.messager.alert("系统提示", "保存成功");
-                    resetValue();
-                    $("#dlg").dialog("close");
-                    $("#dg").datagrid("reload");
+                    const data = $.parseJSON(result);
+                    if(data.success){
+                        $.messager.alert("系统提示", "保存成功");
+                        resetValue();
+                        $("#dlg").dialog("close");
+                        $("#dg").datagrid("reload");
+                    }
+                    else{
+                        $.messager.alert("系统提示", data.msg);
+                    }
                 }
             });
         }

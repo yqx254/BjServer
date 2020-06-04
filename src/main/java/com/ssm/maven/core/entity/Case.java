@@ -10,6 +10,8 @@ import java.io.Serializable;
     private String caseCode;
     private String clientName;
     private String opponentName;
+    private String client;
+    private String opponent;
     private String [] clientNameArr;
     private String [] opponentNameArr;
     private int [] clientIdtArr;
@@ -268,5 +270,21 @@ import java.io.Serializable;
 
     public String[] getOpponentNameArr() {
         return opponentNameArr;
+    }
+
+    public String getClient() {
+        return client;
+    }
+
+    public void setClient(String client) {
+        this.client = client;
+    }
+
+    public String getOpponent() {
+        return opponent;
+    }
+
+    public void setOpponent(String opponent) {
+        this.opponent = opponent;
     }
 }

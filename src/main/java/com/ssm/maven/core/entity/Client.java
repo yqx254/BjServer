@@ -7,11 +7,12 @@ public class Client implements Serializable {
     private String caseId;
     private String clientName;
     private int identity;
-    private int type;
+    private int clientType;
     private String caseCode;
     private String realName;
     private int status;
-    private int createdAt;
+    private long createdAt;
+    private int deleteFlag;
 
     public String getClientId() {
         return clientId;
@@ -45,12 +46,12 @@ public class Client implements Serializable {
         this.identity = identity;
     }
 
-    public int getType() {
-        return type;
+    public int getClientType() {
+        return clientType;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setClientType(int type) {
+        this.clientType = type;
     }
 
     public int getStatus() {
@@ -77,11 +78,19 @@ public class Client implements Serializable {
         this.realName = realName;
     }
 
-    public int getCreatedAt() {
+    public long getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(int createdAt) {
+    public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public int getDeleteFlag() {
+        return deleteFlag;
+    }
+
+    public void setDeleteFlag(int deleteFlag) {
+        this.deleteFlag = deleteFlag;
     }
 }
