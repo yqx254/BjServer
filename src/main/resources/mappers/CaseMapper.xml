@@ -129,7 +129,7 @@
             dealer = #{dealer},
         </if>
         <if test="remarks != null and remarks != '' ">
-            remarks = #{remarks}，
+            remarks = #{remarks},
         </if>
             updated_at = #{updatedAt}
         </set>

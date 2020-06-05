@@ -19,10 +19,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author fstar
@@ -65,10 +62,26 @@ public class CaseController {
             map.put("caseCode",myCase.getCaseCode());
         }
         if(myCase.getClient() != null && !"".equals(myCase.getClient())){
-            map.put("clientList",clientService.findCase(myCase.getClient()));
+            List<Integer> ids = clientService.findCase(myCase.getClient());
+            if(ids.size() == 0){
+                JSONObject result = new JSONObject();
+                result.put("rows", JSONArray.fromObject(ids));
+                result.put("total", 0);
+                ResponseUtil.write(response,result);
+                return null;
+            }
+            map.put("clientList",ids);
         }
         if(myCase.getOpponent() != null && !"".equals(myCase.getOpponent())){
-            map.put("opponentList", clientService.findCaseOp(myCase.getOpponent()));
+            List<Integer> idsOp = clientService.findCaseOp(myCase.getOpponent());
+            if(idsOp.size() == 0){
+                JSONObject result = new JSONObject();
+                result.put("rows", JSONArray.fromObject(idsOp));
+                result.put("total", 0);
+                ResponseUtil.write(response,result);
+                return null;
+            }
+            map.put("opponentList", idsOp);
         }
         if( (myCase.getCreateKW() != null) && !"".equals(myCase.getCreateKW())){
             map.put("createkw",myCase.getCreateKW());
@@ -82,7 +95,8 @@ public class CaseController {
     }
 
     @RequestMapping("/add")
-    public String addCase(Case myCase,
+    public String addCase(@RequestParam(value = "id", required = false) String id,
+                          Case myCase,
                           HttpServletResponse response,
                           HttpServletRequest request) throws Exception {
         JSONObject result = new JSONObject();
@@ -92,19 +106,7 @@ public class CaseController {
             return "login";
         }
         long time = System.currentTimeMillis() / 1000;
-        String caseCode = configService.setThenGetCaseCode(myCase.getCategory());
-        if(caseCode == null || "".equals(caseCode)){
-            result.put("success", false);
-            result.put("msg", "案号生成失败，请重试");
-            ResponseUtil.write(response, result);
-            log.error("案号生成失败");
-        }
-        myCase.setCaseCode(caseCode);
-        myCase.setCreateId(user.getId());
-        myCase.setCreateTel(user.getUserName());
-        myCase.setCreateName(user.getRealName());
-        myCase.setCreatedAt(time);
-        myCase.setUpdatedAt(time);
+        String resMsg;
         if(myCase.getClientNameArr()[0] == null || "".equals(myCase.getClientNameArr()[0])){
             result.put("success", false);
             result.put("msg", "委托人信息不能为空");
@@ -115,8 +117,6 @@ public class CaseController {
         int [] idtArr = myCase.getClientIdtArr();
         String [] opNameArr = myCase.getOpponentNameArr();
         int [] opIdtArr = myCase.getOpponentIdtArr();
-        myCase.setClientName(nameArr[0]);
-        myCase.setClientCount(nameArr.length);
         //查利冲
         for (String s : nameArr) {
             Client client = clientService.conflictCheckClient(s);
@@ -129,10 +129,7 @@ public class CaseController {
                 return null;
             }
         }
-
         if(opNameArr.length > 0){
-            myCase.setOpponentName(opNameArr[0]);
-            myCase.setOpponentCount(opNameArr.length);
             //查利冲
             for(String s : opNameArr){
                 Client client = clientService.conflictCheckOpponent(s);
@@ -146,18 +143,55 @@ public class CaseController {
                 }
             }
         }
-        //TODO: 搞事务？
-        int re = caseService.addCase(myCase);
-        if(re <= 0){
-            result.put("success", false);
-            result.put("msg","数据库操作失败，请重试");
-            ResponseUtil.write(response, result);
-            return null;
+        myCase.setOpponentName(opNameArr[0]);
+        myCase.setOpponentCount(opNameArr.length);
+        myCase.setClientName(nameArr[0]);
+        myCase.setClientCount(nameArr.length);
+        myCase.setCreateId(user.getId());
+        myCase.setCreateTel(user.getUserName());
+        myCase.setCreateName(user.getRealName());
+        //编辑
+        if(id != null && myCase.getCaseCode() != null){
+            resMsg="修改成功！";
+            myCase.setUpdatedAt(time);
+            //删掉旧的客户，待重新添加
+            int r = clientService.deleteByCase(Integer.parseInt(myCase.getId()));
+            if(r <= 0){
+                result.put("success", false);
+                result.put("msg", "客户数据操作失败，请重试");
+                ResponseUtil.write(response, result);
+                log.error("客户数据删除失败");
+            }
+            //更新数据
+            caseService.updateCase(myCase);
         }
+        else{
+            //新增
+            String caseCode = configService.setThenGetCaseCode(myCase.getCategory());
+            resMsg="保存成功！ 案号为： " + caseCode;
+            if(caseCode == null || "".equals(caseCode)){
+                result.put("success", false);
+                result.put("msg", "案号生成失败，请重试");
+                ResponseUtil.write(response, result);
+                log.error("案号生成失败");
+            }
+            myCase.setCaseCode(caseCode);
+            myCase.setCreatedAt(time);
+            myCase.setUpdatedAt(time);
+            //TODO: 搞事务？
+            int re = caseService.addCase(myCase);
+            if(re <= 0){
+                result.put("success", false);
+                result.put("msg","数据库操作失败，请重试");
+                ResponseUtil.write(response, result);
+                return null;
+            }
+        }
+
         for(int i = 0; i < nameArr.length; i ++){
             Client client = new Client();
             client.setCaseId(myCase.getId());
-            client.setCaseCode(caseCode);
+            client.setCaseCode(myCase.getCaseCode());
             client.setClientName(nameArr[i]);
             client.setIdentity(0);
             client.setClientType(idtArr[i]);
@@ -171,7 +205,7 @@ public class CaseController {
             }
             Client client = new Client();
             client.setCaseId(myCase.getId());
-            client.setCaseCode(caseCode);
+            client.setCaseCode(myCase.getCaseCode());
             client.setClientName(opNameArr[j]);
             client.setIdentity(1);
             client.setClientType(opIdtArr[j]);
@@ -180,6 +214,7 @@ public class CaseController {
             clientService.addClient(client);
         }
         result.put("success", true);
+        result.put("msg",resMsg);
         ResponseUtil.write(response, result);
         return null;
     }
@@ -190,7 +225,29 @@ public class CaseController {
         JSONObject result = new JSONObject();
         Case myCase = caseService.caseDetail(id);
         List<Client> clients = clientService.clientsByCase(id);
-        //TODO: 处理委托人信息并放入myCase的对应字符数组中
+        List<String> nameList = new ArrayList<>();
+        List<String> opNameList = new ArrayList<>();
+        List<Integer> idtList = new ArrayList<>();
+        List<Integer>opIdtList = new ArrayList<>();
+        for(Client c : clients){
+            if(c.getIdentity() == 0){
+                nameList.add(c.getClientName());
+                idtList.add(c.getClientType());
+            }
+            else{
+                opNameList.add(c.getClientName());
+                opIdtList.add(c.getClientType());
+            }
+        }
+        String [] nameArr = new String [nameList.size()];
+        myCase.setClientNameArr(nameList.toArray(nameArr));
+        myCase.setClientIdtArr(idtList.stream().mapToInt(x -> x).toArray());
+        String [] opNameArr = new String [opNameList.size()];
+        myCase.setOpponentNameArr(opNameList.toArray(opNameArr));
+        myCase.setOpponentIdtArr(opIdtList.stream().mapToInt(x -> x).toArray());
+        result.put("caseInfo", myCase);
+        result.put("success", true);
+        ResponseUtil.write(response, result);
         return null;
     }
     @RequestMapping("/delete")

@@ -80,10 +80,14 @@
         WHERE case_id = #{caseId}
     </update>
 
-    <select id="getClients" resultMap="client" parameterType="String">
-        SELECT client_name,identity FROM bj_client
-        WHERE case_id = ${caseId}
+    <select id="clientsByCase" resultMap="client" parameterType="String">
+        SELECT client_name,identity,client_type FROM bj_client
+        WHERE case_id = #{caseId}
     </select>
 
+    <delete id="deleteByCase" parameterType="Integer">
+        DELETE FROM bj_client
+        WHERE case_id = #{caseId}
+    </delete>
 
 </mapper>

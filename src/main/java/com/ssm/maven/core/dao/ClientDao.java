@@ -63,4 +63,6 @@ public interface ClientDao {
 
     List<Client> clientsByCase(String caseId);
 
+    int deleteByCase(int caseId);
+
 }

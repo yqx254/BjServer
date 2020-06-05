@@ -61,8 +61,8 @@
 
         function openCaseAddDialog() {
             $("#dlg").dialog("open").dialog("setTitle", "新增");
+            resetValue();
             url = "${pageContext.request.contextPath}/case/add.do";
-            $("#roleId").combobox("select","");
         }
 
         function saveCase() {
@@ -75,7 +75,7 @@
                 success: function (result) {
                     const data = $.parseJSON(result);
                     if(data.success){
-                        $.messager.alert("系统提示", "保存成功");
+                        $.messager.alert("系统提示", data.msg);
                         resetValue();
                         $("#dlg").dialog("close");
                         $("#dg").datagrid("reload");
@@ -112,18 +112,160 @@
             });
         }
 
-        function openCaseModifyDialog() {
-            var selectedRows = $("#dg").datagrid('getSelections');
-            if (selectedRows.length !== 1) {
-                $.messager.alert("系统提示", "请选择一条要编辑的数据！");
-                return;
-            }
-            var row = selectedRows[0];
-            $("#dlg").dialog("open").dialog("setTitle", "编辑用户信息");
-            $('#fm').form('load', row);
-            $("#password").val("******");
-            url = "${pageContext.request.contextPath}/user/save.do?id=" + row.id;
+        function openCaseEditDialog(index) {
+            resetValue();
+            $.get(
+                "${pageContext.request.contextPath}/case/get-detail.do?id=" + index,
+                function(result){
+                    if(result.success){
+                        let mycase = result.caseInfo;
+                        let client = mycase.clientNameArr;
+                        if(client.length > 1){
+                            clCnt = client.length;
+                        }
+                        let clientIdx = mycase.clientIdtArr;
+                        let opponent = mycase.opponentNameArr;
+                        if(opponent.length > 1){
+                            opCnt = opponent.length;
+                        }
+                        let opponentIdx = mycase.opponentIdtArr;
+                        for(var i = 0; i < client.length;i ++){
+                            var clientTr;
+                            if(i === 0){
+                                $("#cl").val(client[0]);
+                                $("#clIdx").combobox('select', clientIdx[0]);
+                                continue;
+                            }
+                            else if(i == 1){
+                                clientTr    = $("#client");
+                            }
+                            else{
+                                clientTr = $("#cl-" + (i - 1));
+                            }
+                            var tr = "<tr id=\"cl-" + i + "\">"+
+                                "               <td>委托人：</td>\n" +
+                                "                <td>\n" +
+                                "                    <input type=\"text\"  name=\"clientNameArr\"\n" +
+                                "                           class=\"easyui-validatebox\" value=\"" + client[i] + "\" required=\"true\"/>&nbsp;<font\n" +
+                                "                        color=\"red\">*</font>\n" +
+                                "<select id=\"clSelect-" + i + "\" name=\"clientIdtArr\" class=\"easyui-combobox\"  style=\"width:75px;\" editable=\"false\">";
+                            if(clientIdx[i] == 0){
+                                tr += "<option value=\"0\" selected=\"selected\">原告</option>" ;
+                            }
+                             else{
+                                tr += "<option value=\"0\">原告</option>" ;
+                            }
+                            if(clientIdx[i] == 1){
+                                tr += "<option value=\"1\" selected=\"selected\">被告</option>"
+                            }
+                            else{
+                                tr += "<option value=\"1\">被告</option>";
+                            }
+                            if(clientIdx[i] == 2){
+                                tr += "<option value=\"1\" selected=\"selected\">原告人</option>";
+                            }
+                            else{
+                                tr += "<option value=\"1\">原告人</option>";
+                            }
+                            if(clientIdx[i] == 3){
+                                tr += "<option value=\"1\" selected=\"selected\">被告人</option>";
+                            }
+                            else{
+                                tr += "<option value=\"1\">被告人</option>";
+                            }
+                            if(clientIdx[i] == 4){
+                                tr += "<option value=\"4\" selected=\"selected\">第三人</option>";
+                            }
+                            else{
+                                tr += "<option value=\"4\">第三人</option>";
+                            }
+                            if(clientIdx[i] == 5){
+                                tr += "<option value=\"5\" selected=\"selected\">顾问单位</option>";
+                            }
+                            else{
+                                tr += "<option value=\"5\">顾问单位</option>";
+                            }
+
+                                tr += "</select> " +
+                                "                </td>" +
+                                "</tr>";
+                            $(tr).insertAfter(clientTr);
+                        }
+                        for(var i = 0; i < opponent.length;i ++){
+                            var opponentTr;
+                            if(i === 0){
+                                $("#op").val(opponent[0]);
+                                $("#opIdx").combobox('select', opponentIdx[0]);
+                                continue;
+                            }
+                            else if(i == 1){
+                                opponentTr    = $("#opponent");
+                            }
+                            else{
+                                opponentTr = $("#op-" + (i - 1));
+                            }
+                            var tr = "<tr id=\"op-" + i + "\">"+
+                                "               <td>对方当事人：</td>\n" +
+                                "                <td>\n" +
+                                "                    <input type=\"text\"  name=\"opponentNameArr\"\n" +
+                                "                           class=\"easyui-validatebox\" value=\"" + opponent[i] + "\"/>&nbsp;&nbsp;" +
+                                "<select id=\"opSelect-" + i + "\"name=\"opponentIdtArr\" class=\"easyui-combobox\"  style=\"width:75px;\" editable=\"false\">";
+                            if(opponentIdx[i] == 0){
+                                tr += "<option value=\"0\" selected=\"selected\">原告</option>" ;
+                            }
+                            else{
+                                tr += "<option value=\"0\">原告</option>" ;
+                            }
+                            if(opponentIdx[i] == 1){
+                                tr += "<option value=\"1\" selected=\"selected\">被告</option>"
+                            }
+                            else{
+                                tr += "<option value=\"1\">被告</option>";
+                            }
+                            if(opponentIdx[i] == 2){
+                                tr += "<option value=\"1\" selected=\"selected\">原告人</option>";
+                            }
+                            else{
+                                tr += "<option value=\"1\">原告人</option>";
+                            }
+                            if(opponentIdx[i] == 3){
+                                tr += "<option value=\"1\" selected=\"selected\">被告人</option>";
+                            }
+                            else{
+                                tr += "<option value=\"1\">被告人</option>";
+                            }
+                            if(opponentIdx[i] == 4){
+                                tr += "<option value=\"4\" selected=\"selected\">第三人</option>";
+                            }
+                            else{
+                                tr += "<option value=\"4\">第三人</option>";
+                            }
+                            if(opponentIdx[i] == 5){
+                                tr += "<option value=\"5\" selected=\"selected\">顾问单位</option>";
+                            }
+                            else{
+                                tr += "<option value=\"5\">顾问单位</option>";
+                            }
+                            tr += "</select> " +
+                                "                </td>" +
+                                "</tr>";
+                            $("#opSelect-" + i).combobox('select', opponentIdx[i]);
+                            $(tr).insertAfter(opponentTr);
+                        }
+                        $("#dlg").dialog("open").dialog("setTitle", "编辑");
+                        $("#category").combobox('select', mycase.category);
+                        $("input[name=dealer]").val(mycase.dealer);
+                        $("input[name=remarks]").val(mycase.remarks);
+                        $("input[name=caseCode]").val(mycase.caseCode);
+                    }
+                    else{
+                        $.messager.alert("系统提示", "查询信息失败，请重试");
+                    }
+                },"json");
+
+            url = "${pageContext.request.contextPath}/case/add.do?id=" + index;
         }
+
         function openCaseCloseDialog(idx){
             $("#caseClsDlg").dialog("open").dialog("setTitle", "结案");
             url = "${pageContext.request.contextPath}/case/solve.do";
@@ -132,11 +274,14 @@
         function resetValue() {
             $("#cl").val("");
             $("#op").val("");
-            $("#category").val("");
             $("#clIdx").val("");
             $("#opIdx").val("");
-            $("#dealer").val("");
-            $("#remarks").val("");
+            $("#category").combobox('select', 0);
+            $("#clIdx").combobox('select', 0);
+            $("#opIdx").combobox('select',0);
+            $("input[name=dealer]").val("");
+            $("input[name=remarks]").val("");
+            $("input[name=caseCode]").val("");
             let i = 1;
             for(;i <= clCnt; i ++){
                 $("#cl-" + i).remove();
@@ -145,6 +290,8 @@
             for(;j <= opCnt; j ++){
                 $("#op-" + j).remove();
             }
+            clCnt = 1;
+            opCnt = 1;
         }
 
         function closeCaseDialog() {
@@ -173,7 +320,7 @@
                 "                    <input type=\"text\"  name=\"clientNameArr\"\n" +
                 "                           class=\"easyui-validatebox\" required=\"true\"/>&nbsp;<font\n" +
                 "                        color=\"red\">*</font>\n" +
-                "<select name=\"clientIdtArr\" class=\"easyui-combobox\"  style=\"width:60px;\" editable=\"false\">"+
+                "<select name=\"clientIdtArr\" class=\"easyui-combobox\"  style=\"width:75px;\" editable=\"false\">"+
                 "<option value=\"0\">原告</option>" +
                 "<option value=\"1\">被告</option>" +
                 "<option value=\"2\">原告人</option>" +
@@ -205,9 +352,8 @@
                 "               <td>对方当事人：</td>\n" +
                 "                <td>\n" +
                 "                    <input type=\"text\"  name=\"opponentNameArr\"\n" +
-                "                           class=\"easyui-validatebox\" required=\"true\"/>&nbsp;<font\n" +
-                "                        color=\"red\">*</font>\n" +
-                "<select name=\"opponentIdtArr\" class=\"easyui-combobox\"  style=\"width:60px;\" editable=\"false\">"+
+                "                           class=\"easyui-validatebox\" required=\"true\"/>&nbsp;&nbsp;" +
+                "<select name=\"opponentIdtArr\" class=\"easyui-combobox\"  style=\"width:75px;\" editable=\"false\">"+
                 "<option value=\"0\">原告</option>" +
                 "<option value=\"1\">被告</option>" +
                 "<option value=\"2\">原告人</option>" +
@@ -285,10 +431,17 @@
     </div>
 </div>
 <div id="dlg" class="easyui-dialog"
-     style="width: 620px;height:250px;padding: 10px 20px" closed="true"
+     style="width: 620px;height:620px;padding: 10px 20px" closed="true"
      buttons="#dlg-buttons">
     <form id="fm" method="post">
         <table id="addTable" cellspacing="8px">
+            <tr>
+                <td>案号：</td>
+                <td>
+                    <input type="text"  name="caseCode"  readonly
+                           class="easyui-validatebox" />
+                </td>
+            </tr>
             <tr>
                 <td>类型：</td>
                 <td>
@@ -307,7 +460,7 @@
                         <input type="text"  name="clientNameArr" id="cl"
                                class="easyui-validatebox" required="true"/>&nbsp;<font
                             color="red">*</font>
-                        <select id="clIdx" name="clientIdtArr" class="easyui-combobox"  editable="false" style="width:60px;" required="true">
+                        <select id="clIdx" name="clientIdtArr" class="easyui-combobox"  editable="false" style="width:75px;" required="true">
                             <option value="0">原告</option>
                             <option value="1">被告</option>
                             <option value="2">原告人</option>
@@ -323,8 +476,8 @@
                 <td>对方当事人：</td>
                 <td>
                     <input type="text"  name="opponentNameArr" id="op"
-                           class="easyui-validatebox" />&nbsp;
-                    <select id="opIdx" name="opponentIdtArr" class="easyui-combobox"  editable="false" style="width:60px;" required="true">
+                           class="easyui-validatebox" />&nbsp;&nbsp;
+                    <select id="opIdx" name="opponentIdtArr" class="easyui-combobox"  editable="false" style="width:75px;" required="true">
                         <option value="0">原告</option>
                         <option value="1">被告</option>
                         <option value="2">原告人</option>
@@ -339,14 +492,14 @@
             <tr>
                 <td>承办人：</td>
                 <td>
-                    <input type="text"  name="dealer"
+                    <input type="text"  name="dealer" value=""
                            class="easyui-validatebox" />
                 </td>
             </tr>
             <tr>
                 <td>备注：</td>
                 <td>
-                    <input type="text"  name="remarks"
+                    <input type="text"  name="remarks" value=""
                            class="easyui-validatebox" />
                 </td>
             </tr>

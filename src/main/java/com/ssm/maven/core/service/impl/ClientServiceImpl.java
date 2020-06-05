@@ -42,6 +42,11 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public int deleteByCase(int caseId) {
+        return clientDao.deleteByCase(caseId);
+    }
+
+    @Override
     public int solveClient(int caseId) {
         return clientDao.solveClient(caseId);
     }

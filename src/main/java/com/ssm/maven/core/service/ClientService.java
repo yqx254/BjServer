@@ -19,6 +19,8 @@ public interface ClientService {
 
     int deleteClients(int id);
 
+    int deleteByCase(int caseId);
+
     int solveClient(int caseId);
 
     List<Integer> findCase(String clientName);
