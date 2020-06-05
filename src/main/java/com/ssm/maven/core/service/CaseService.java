@@ -37,6 +37,12 @@ public interface CaseService {
     void updateCase(Case oldCase);
 
     /**
+     * 获取案件详情
+     * @param id 案件id
+     * @return 案件详情
+     */
+    Case caseDetail(String id);
+    /**
      *  删除案件
      * @param caseId 案件编号
      */

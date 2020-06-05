@@ -60,4 +60,7 @@ public interface ClientDao {
      * @return 操作结果
      */
     int solveClient(int caseId);
+
+    List<Client> clientsByCase(String caseId);
+
 }

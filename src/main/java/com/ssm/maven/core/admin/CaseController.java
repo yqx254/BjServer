@@ -184,6 +184,15 @@ public class CaseController {
         return null;
     }
 
+    @RequestMapping("get-detail")
+    public String detail(@RequestParam(value = "id") String id,
+                         HttpServletResponse response) throws Exception{
+        JSONObject result = new JSONObject();
+        Case myCase = caseService.caseDetail(id);
+        List<Client> clients = clientService.clientsByCase(id);
+        //TODO: 处理委托人信息并放入myCase的对应字符数组中
+        return null;
+    }
     @RequestMapping("/delete")
     public String delete(@RequestParam(value = "ids") String ids,
                          HttpServletResponse response) throws Exception {
