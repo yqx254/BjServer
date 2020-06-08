@@ -23,14 +23,8 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<Menu> getMenuList(String roleId) {
-        int superAdmin = 1;
         List<Menu> menuList;
-        if(Integer.parseInt(roleId) == superAdmin){
-            menuList =   menuDao.getMenuList();
-        }
-        else{
             menuList = roleMenuRelDao.getRoleMenu(roleId);
-        }
         List<Menu> rootMenuList = new ArrayList<>(64);
         menuList.forEach(menu ->{
             if("0".equals(menu.getParentId())){

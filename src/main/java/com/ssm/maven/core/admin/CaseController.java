@@ -74,7 +74,12 @@ public class CaseController {
         if(user == null || user.getId() == null){
             return "login";
         }
-        map.put("createId",user.getId());
+        if(!"1".equals(user.getRoleId())){
+            map.put("createId",user.getId());
+        }
+        else{
+            map.put("createId","0");
+        }
         if(myCase.getCaseCode() != null && !"".equals(myCase.getCaseCode())){
             map.put("caseCode",myCase.getCaseCode());
         }
@@ -219,7 +224,7 @@ public class CaseController {
             client.setIdentity(0);
             client.setClientType(idtArr[i]);
             client.setRealName(myCase.getDealer());
-            client.setCreatedAt(myCase.getCreatedAt());
+            client.setCreatedAt(time);
             clientService.addClient(client);
         }
         for(int j = 0;j < opNameArr.length; j ++){

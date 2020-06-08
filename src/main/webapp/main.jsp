@@ -67,24 +67,11 @@
 <div region="center">
     <div class="easyui-tabs" fit="true" border="false" id="tabs">
         <div title="首页" data-options="iconCls:'icon-home'">
-                        <div align="center" style="padding-top: 20px;"><a
-                    href="https://git.oschina.net/zhenfeng13/ssm-demo"
-                    target="_blank" style="font-size: 20px;">开源中国仓库地址${name}</a>
-            </div>
-            <div align="center" style="padding-top: 20px;"><a href="https://github.com/ZHENFENG13/ssm-demo"
+            <div align="center" style="padding-top: 20px;"><a href="https://github.com/yqx254/BjServer/issues"
                                                               target="_blank"
-                                                              style="font-size: 20px;">Gitub仓库地址</a></div>
-
-            <div align="center" style="padding-top: 50px;"><a
-                    href="http://download.csdn.net/detail/zhenfengshisan/9813721"
-                    target="_blank" style="font-size: 20px;">项目源码下载(最新代码)</a>
-            </div>
-            <div align="center" style="padding-top: 20px;"><a
-                    href="http://download.csdn.net/detail/zhenfengshisan/9765855"
-                    target="_blank" style="font-size: 20px;">项目源码下载(非maven)</a>
-            </div>
+                                                              style="font-size: 20px;">欢迎来这里给我提BUG</a></div>
             <div align="center" style="padding-top: 50px">
-                <font color="grey" size="10">ssm demo</font>
+                <font color="grey" size="10">案件信息管理系统</font>
             </div>
         </div>
     </div>

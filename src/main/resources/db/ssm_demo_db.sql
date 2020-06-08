@@ -37,7 +37,7 @@ CREATE TABLE `bj_client` (
   `client_type` tinyint DEFAULT NULL COMMENT '身份0-原告1-被告2-第三人3-顾问单位',
   `case_code` varchar(63) DEFAULT NULL COMMENT '案号-冗余字段',
   `realname` varchar(127) DEFAULT NULL COMMENT '录入人-冗余字段',
-  `status` tinyint DEFAULT NULL COMMENT '是否有效0-有效1-已结案并置为无效的数据',
+  `status` tinyint(4) DEFAULT '0' COMMENT '是否有效0-有效1-已结案并置为无效的数据',
   `delete_flag` tinyint DEFAULT NULL COMMENT '删除标记',
   `created_at` int DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`client_id`),

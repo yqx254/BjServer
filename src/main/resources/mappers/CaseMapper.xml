@@ -57,7 +57,7 @@
             <if test="endAt != null and endAt != 0">
                 AND  <![CDATA[ created_at <  ]]> #{endAt}
             </if>
-            <if test="createId != 1">
+            <if test="createId != 0">
                 AND create_id = #{createId}
             </if>
             AND delete_flag = 0

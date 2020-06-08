@@ -1,3 +1,10 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: ravix
+  Date: 2020/6/8
+  Time: 21:34
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
@@ -88,16 +95,6 @@
         }
 
         function saveCase() {
-            const check = $("#forceInput").is(':checked');
-            const isAdd = ($("#caseCode").val() == null || $("#caseCode").val() === "");
-            if(check){
-                if(isAdd){
-                    url += "?force=1";
-                }
-                else{
-                    url += "&force=1";
-                }
-            }
             $("#fm").form("submit", {
                 url: url,
                 dataType : "json",
@@ -124,7 +121,7 @@
             let clear = 0;
             if(check){
                 tips = "确定要结案，并移除当事人信息吗？"
-               clear = 1;
+                clear = 1;
             }
             $.messager.confirm("系统提示", tips, function (r) {
                 if (r) {
@@ -184,7 +181,7 @@
                             if(clientIdx[i] == 0){
                                 tr += "<option value=\"0\" selected=\"selected\">原告</option>" ;
                             }
-                             else{
+                            else{
                                 tr += "<option value=\"0\">原告</option>" ;
                             }
                             if(clientIdx[i] == 1){
@@ -218,7 +215,7 @@
                                 tr += "<option value=\"5\">顾问单位</option>";
                             }
 
-                                tr += "</select> " +
+                            tr += "</select> " +
                                 "                </td>" +
                                 "</tr>";
                             $(tr).insertAfter(clientTr);
@@ -482,15 +479,15 @@
             $("#dlg").dialog("close");
         }
         function rowFormatter(value, row, index) {
-            if(row.status == 1){
+            if(row.status ===1){
                 return '<a href="javascript:openCaseEditDialog(' + value +')" >编辑</a> ' + '   ' +
                     '<a href="javascript:openCaseCloseDialog(' + value + ')">结案</a> ';
             }
             return '<a href="javascript:openCaseDetailDialog(' + value + ')">详情</a>';
-          }
+        }
         function addrows(){
             var clientTr;
-            if(clCnt == 1){
+            if(clCnt === 1){
                 clientTr    = $("#client");
             }
             else{
@@ -586,7 +583,7 @@
     <thead>
     <tr>
         <th field="cb" checkbox="true" align="center"></th>
-<%--        <th field="id" width="50" align="center">ID</th>--%>
+        <%--        <th field="id" width="50" align="center">ID</th>--%>
         <th field="caseCode" width="100" align="center">案号</th>
         <th field="categoryShow" width="100" align="center">类别</th>
         <th field="clientNameShow" width="100" align="center">委托人</th>
@@ -608,17 +605,17 @@
     </div>
     <div>
         &nbsp;案号：&nbsp;<input type="text" id="s_caseCode" size="20" placeholder="请输入案号"
-                               onkeydown="if(event.keyCode===13) searchCase()"/>
-            委托人：<input type="text" id="s_client" size="20" placeholder="请输入委托人姓名"
+                              onkeydown="if(event.keyCode===13) searchCase()"/>
+        委托人：<input type="text" id="s_client" size="20" placeholder="请输入委托人姓名"
                    onkeydown="if(event.keyCode===13) searchCase()"/>
-            对方当事人：<input type="text" id="s_opponent" size="20" placeholder="请输入对方当事人姓名"
-                       onkeydown="if(event.keyCode===13) searchCase()"/>
-            录入人：<input type="text" id="s_create" size="20" placeholder="请输入录入人姓名或电话"
-                         onkeydown="if(event.keyCode===13) searchCase()"/>
-            录入时间：<input class="easyui-datebox" id="start_date" data-options="formatter:myformatter,parser:myparser" />-
-                              <input class="easyui-datebox" id="end_date" data-options="formatter:myformatter,parser:myparser" />
+        对方当事人：<input type="text" id="s_opponent" size="20" placeholder="请输入对方当事人姓名"
+                     onkeydown="if(event.keyCode===13) searchCase()"/>
+        录入人：<input type="text" id="s_create" size="20" placeholder="请输入录入人姓名或电话"
+                   onkeydown="if(event.keyCode===13) searchCase()"/>
+        录入时间：<input class="easyui-datebox" id="start_date" data-options="formatter:myformatter,parser:myparser" />-
+        <input class="easyui-datebox" id="end_date" data-options="formatter:myformatter,parser:myparser" />
         <a href="javascript:searchCase()" class="easyui-linkbutton"
-                iconCls="icon-search" plain="true">搜索</a>
+           iconCls="icon-search" plain="true">搜索</a>
         <a href="javascript:resetList()" class="easyui-linkbutton"
            iconCls="icon-reload" plain="true">重置</a>
         <a href="javascript:outputCase()" class="easyui-linkbutton"
@@ -665,22 +662,22 @@
                 </td>
             </tr>
             <tr id="client">
-                    <td>委托人：</td>
-                    <td>
-                        <input type="text"  name="clientNameArr" id="cl"
-                               class="easyui-validatebox" required="true"/>&nbsp;<font
-                            color="red">*</font>
-                        <select id="clIdx" name="clientIdtArr" class="easyui-combobox"  editable="false" style="width:75px;" required="true">
-                            <option value="0">原告</option>
-                            <option value="1">被告</option>
-                            <option value="2">原告人</option>
-                            <option value="3">被告人</option>
-                            <option value="4">第三人</option>
-                            <option value="5">顾问单位</option>
-                        </select>
-                        <input type="button"  value="添加" onClick="addrows();">
-                        <input type="button"  value="删除" onClick="deleterow();">
-                    </td>
+                <td>委托人：</td>
+                <td>
+                    <input type="text"  name="clientNameArr" id="cl"
+                           class="easyui-validatebox" required="true"/>&nbsp;<font
+                        color="red">*</font>
+                    <select id="clIdx" name="clientIdtArr" class="easyui-combobox"  editable="false" style="width:75px;" required="true">
+                        <option value="0">原告</option>
+                        <option value="1">被告</option>
+                        <option value="2">原告人</option>
+                        <option value="3">被告人</option>
+                        <option value="4">第三人</option>
+                        <option value="5">顾问单位</option>
+                    </select>
+                    <input type="button"  value="添加" onClick="addrows();">
+                    <input type="button"  value="删除" onClick="deleterow();">
+                </td>
             </tr>
             <tr id="opponent">
                 <td>对方当事人：</td>
@@ -715,9 +712,6 @@
             </tr>
         </table>
     </form>
-    <label>
-        <input type="checkbox"   id="forceInput"   />不进行利冲校验
-    </label>
 </div>
 
 <div id="dlg-buttons">
@@ -800,7 +794,7 @@
 </div>
 <div id="dlg-buttons2">
     <a href="javascript:closeDetailDialog()"
-                                   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+       class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 </body>
 </html>
