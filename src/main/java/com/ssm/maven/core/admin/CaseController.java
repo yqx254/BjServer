@@ -7,6 +7,7 @@ import com.ssm.maven.core.entity.User;
 import com.ssm.maven.core.service.CaseService;
 import com.ssm.maven.core.service.ClientService;
 import com.ssm.maven.core.service.ConfigService;
+import com.ssm.maven.core.service.impl.ExcelImpl;
 import com.ssm.maven.core.util.ResponseUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -16,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -36,21 +40,34 @@ public class CaseController {
     @Resource
     private ConfigService configService;
 
+    @Resource
+    private ExcelImpl excelImpl;
+
     private static final Logger log = Logger.getLogger(CaseController.class);
 
     @RequestMapping("/list")
     public String getCaseList(
             @RequestParam(value="page", required = false)String page,
             @RequestParam(value="rows", required = false) String rows,
+            @RequestParam(value="startDate", required = false) String startDate,
+            @RequestParam(value="endDate", required = false) String endDate,
             Case myCase,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         Map<String, Object> map = new HashMap<>(32);
         if(page != null  && rows != null){
             PageBean pageBean = new PageBean(Integer.parseInt(page),
-                    20);
+                    Integer.parseInt(rows));
             map.put("start",pageBean.getStart());
             map.put("size", pageBean.getPageSize());
+        }
+        if(startDate != null && !"".equals(startDate)){
+            long start = new SimpleDateFormat("yyyy-MM-dd").parse(startDate).getTime() / 1000;
+            map.put("startAt",start);
+        }
+        if(endDate != null && !"".equals(endDate)){
+            long end = new SimpleDateFormat("yyyy-MM-dd").parse(endDate).getTime() / 1000 + 86400;
+            map.put("endAt",end);
         }
         HttpSession session = request.getSession();
         User user = (User)session.getAttribute("currentUser");
@@ -96,6 +113,7 @@ public class CaseController {
 
     @RequestMapping("/add")
     public String addCase(@RequestParam(value = "id", required = false) String id,
+                          @RequestParam(value = "force", required = false) Integer force,
                           Case myCase,
                           HttpServletResponse response,
                           HttpServletRequest request) throws Exception {
@@ -106,6 +124,7 @@ public class CaseController {
             return "login";
         }
         long time = System.currentTimeMillis() / 1000;
+        force = (force == null )? 0 : force;
         String resMsg;
         if(myCase.getClientNameArr()[0] == null || "".equals(myCase.getClientNameArr()[0])){
             result.put("success", false);
@@ -118,21 +137,9 @@ public class CaseController {
         String [] opNameArr = myCase.getOpponentNameArr();
         int [] opIdtArr = myCase.getOpponentIdtArr();
         //查利冲
-        for (String s : nameArr) {
-            Client client = clientService.conflictCheckClient(s);
-            if (client != null) {
-                String msg = "与案件" + client.getCaseCode() + "存在利冲，承办人"
-                        + client.getRealName() + ",请核实";
-                result.put("success", false);
-                result.put("msg", msg);
-                ResponseUtil.write(response, result);
-                return null;
-            }
-        }
-        if(opNameArr.length > 0){
-            //查利冲
-            for(String s : opNameArr){
-                Client client = clientService.conflictCheckOpponent(s);
+        if(force != 1){
+            for (String s : nameArr) {
+                Client client = clientService.conflictCheckClient(s);
                 if (client != null) {
                     String msg = "与案件" + client.getCaseCode() + "存在利冲，承办人"
                             + client.getRealName() + ",请核实";
@@ -140,6 +147,22 @@ public class CaseController {
                     result.put("msg", msg);
                     ResponseUtil.write(response, result);
                     return null;
+                }
+            }
+        }
+        if(opNameArr.length > 0){
+            //查利冲
+            if(force != 1){
+                for(String s : opNameArr){
+                    Client client = clientService.conflictCheckOpponent(s);
+                    if (client != null) {
+                        String msg = "与案件" + client.getCaseCode() + "存在利冲，承办人"
+                                + client.getRealName() + ",请核实";
+                        result.put("success", false);
+                        result.put("msg", msg);
+                        ResponseUtil.write(response, result);
+                        return null;
+                    }
                 }
             }
         }
@@ -195,7 +218,7 @@ public class CaseController {
             client.setClientName(nameArr[i]);
             client.setIdentity(0);
             client.setClientType(idtArr[i]);
-            client.setRealName(myCase.getCreateName());
+            client.setRealName(myCase.getDealer());
             client.setCreatedAt(myCase.getCreatedAt());
             clientService.addClient(client);
         }
@@ -266,12 +289,77 @@ public class CaseController {
 
     @RequestMapping("/solve")
     public String solve(@RequestParam(value = "id") String id,
-                        HttpServletResponse response) throws Exception{
+                        Integer clear,HttpServletResponse response) throws Exception{
         JSONObject result = new JSONObject();
         int res = caseService.solveCase(Integer.parseInt(id));
-        clientService.solveClient(Integer.parseInt(id));
+        if(clear > 0){
+            clientService.solveClient(Integer.parseInt(id));
+        }
         result.put("success", res > 0);
         ResponseUtil.write(response, result);
+        return null;
+    }
+
+    @RequestMapping("/export")
+    public String export(HttpServletResponse response,
+                         HttpServletRequest request,
+                         @RequestParam(value="startDate", required = false) String startDate,
+                         @RequestParam(value="endDate", required = false) String endDate,
+                         Case myCase){
+        response.setContentType("application/binary;charset=UTF-8");
+        try{
+            ServletOutputStream out=response.getOutputStream();
+            response.setHeader("Content-Disposition", "attachment;fileName=export.xls");
+            String [] titles = {"案号","委托人","对方当事人","承办人","备注","录入时间"};
+            Map<String, Object> map = new HashMap<>(32);
+            HttpSession session = request.getSession();
+            User user = (User)session.getAttribute("currentUser");
+            if(user == null || user.getId() == null){
+                return "login";
+            }
+            map.put("createId",user.getId());
+            if(myCase.getCaseCode() != null && !"".equals(myCase.getCaseCode())){
+                map.put("caseCode",myCase.getCaseCode());
+            }
+            if(myCase.getClient() != null && !"".equals(myCase.getClient())){
+                List<Integer> ids = clientService.findCase(myCase.getClient());
+                if(ids.size() == 0){
+                    JSONObject result = new JSONObject();
+                    result.put("rows", JSONArray.fromObject(ids));
+                    result.put("total", 0);
+                    ResponseUtil.write(response,result);
+                    return null;
+                }
+                map.put("clientList",ids);
+            }
+            if(myCase.getOpponent() != null && !"".equals(myCase.getOpponent())){
+                List<Integer> idsOp = clientService.findCaseOp(myCase.getOpponent());
+                if(idsOp.size() == 0){
+                    JSONObject result = new JSONObject();
+                    result.put("rows", JSONArray.fromObject(idsOp));
+                    result.put("total", 0);
+                    ResponseUtil.write(response,result);
+                    return null;
+                }
+                map.put("opponentList", idsOp);
+            }
+            if( (myCase.getCreateKW() != null) && !"".equals(myCase.getCreateKW())){
+                map.put("createkw",myCase.getCreateKW());
+            }
+            if(startDate != null && !"".equals(startDate)){
+                long start = new SimpleDateFormat("yyyy-MM-dd").parse(startDate).getTime() / 1000;
+                map.put("startAt",start);
+            }
+            if(endDate != null && !"".equals(endDate)){
+                long end = new SimpleDateFormat("yyyy-MM-dd").parse(endDate).getTime() / 1000 + 86400;
+                map.put("endAt",end);
+            }
+            List<Case> list = caseService.getCase(map);
+            excelImpl.exportCase(list, titles, out);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         return null;
     }
 }
