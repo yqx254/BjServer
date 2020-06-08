@@ -83,6 +83,30 @@ public class UserController {
         }
     }
 
+    @RequestMapping("/login-mn")
+    public String loginMN(User user, HttpServletRequest request,
+                          HttpServletResponse response) throws Exception {
+        try {
+            String MD5pwd = MD5Util.MD5Encode(user.getPassword(), "UTF-8");
+            user.setPassword(MD5pwd);
+        } catch (Exception e) {
+            user.setPassword("");
+        }
+        User resultUser = userService.login(user);
+        JSONObject result = new JSONObject();
+        log.info("request: user/login , user: " + user.toString());
+        if(resultUser == null){
+            result.put("success",false);
+            result.put("msg","请认真核对账号密码");
+            ResponseUtil.write(response,result);
+        }
+        HttpSession session = request.getSession();
+        session.setAttribute("currentUser", resultUser);
+        result.put("success", true);
+        ResponseUtil.write(response,result);
+        return null;
+    }
+
 
     /**
      * 修改密码
