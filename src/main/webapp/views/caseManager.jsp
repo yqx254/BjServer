@@ -594,6 +594,7 @@
         <th field="createName" width="100" align="center">录入人</th>
         <th field="dealer" width="100" align="center">承办人</th>
         <th field="statusShow" width="100" align="center">状态</th>
+        <th field="createdAtStr" width="100" align="center">录入时间</th>
         <th field="id" width="100" formatter="rowFormatter">操作</th>
 
     </tr>

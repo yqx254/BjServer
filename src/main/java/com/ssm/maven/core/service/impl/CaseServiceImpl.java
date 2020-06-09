@@ -6,6 +6,8 @@ import com.ssm.maven.core.service.CaseService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +27,12 @@ public class CaseServiceImpl implements CaseService {
      */
     @Override
     public List<Case> getCase(Map<String, Object> map) {
-        return caseDao.getCase(map);
+        List<Case> cases = caseDao.getCase(map);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        for(Case myCase : cases){
+            myCase.setCreatedAtStr(sdf.format(new Date(myCase.getCreatedAt() * 1000)));
+        }
+        return  cases;
     }
 
     /**

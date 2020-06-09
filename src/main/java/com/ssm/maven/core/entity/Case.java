@@ -29,6 +29,7 @@ import java.io.Serializable;
     private String createTel;
     private String createName;
     private String createKW;
+    private String createdAtStr;
 
     private String categoryShow;
     private String clientNameShow;
@@ -286,5 +287,13 @@ import java.io.Serializable;
 
     public void setOpponent(String opponent) {
         this.opponent = opponent;
+    }
+
+    public String getCreatedAtStr() {
+        return createdAtStr;
+    }
+
+    public void setCreatedAtStr(String createdAtStr) {
+        this.createdAtStr = createdAtStr;
     }
 }
