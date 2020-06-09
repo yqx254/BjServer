@@ -5,11 +5,9 @@ import com.ssm.maven.core.entity.User;
 import com.ssm.maven.core.service.CaseService;
 import com.ssm.maven.core.util.ResponseUtil;
 import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -27,11 +25,12 @@ import java.util.Map;
 @RequestMapping("/ffff")
 public class CaseApiController {
 
-
     @Resource
     private CaseService caseService;
 
-    @RequestMapping("/list")
+    private static final Logger log = Logger.getLogger(CaseController.class);
+
+    @RequestMapping(value="list", method = RequestMethod.GET)
     public List<Case> caseList(HttpServletRequest request,
                                                      HttpServletResponse response,
                                                      @RequestParam(value="keyword", required = false)String keyword) throws Exception {
@@ -43,6 +42,6 @@ public class CaseApiController {
             return caseList;
         }
         Map<String, Object> map = new HashMap<>(32);
-        return caseList;
+        return caseService.getCase(map);
     }
 }
