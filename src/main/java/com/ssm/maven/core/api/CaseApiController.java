@@ -9,7 +9,9 @@ import com.ssm.maven.core.entity.Client;
 import com.ssm.maven.core.entity.User;
 import com.ssm.maven.core.service.CaseService;
 import com.ssm.maven.core.service.ClientService;
+import com.ssm.maven.core.util.ResponseUtil;
 import net.sf.json.JSONArray;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -108,9 +110,58 @@ public class CaseApiController {
                                         @RequestParam("id") String id,
                                         @RequestParam("dealer") String dealer,
                                         @RequestParam("remarks") String remarks,
-                                        @RequestParam("accuser") String accuser){
-        Map<String, Object> itemMap = JSONObject.toJavaObject((JSON) JSON.parseArray(accuser).get(0), Map.class);
-        log.info(itemMap.get("accuserName"));
+                                        @RequestParam("accuser") String accuser,
+                                        @RequestParam("accused") String accused){
+        Map<String, String > result = new HashMap<>(16);
+        List<Client> clients = new ArrayList<>(64);
+        Case myCase = caseService.caseDetail(id);
+        long time = System.currentTimeMillis() / 1000;
+        for(Object o : JSON.parseArray(accuser)){
+            Map<String, Object> itemMap = JSONObject.toJavaObject((JSON)o, Map.class);
+            String clientName = (String)itemMap.get("accuserName");
+            Client check = clientService.conflictCheckClient(clientName);
+            if (check != null) {
+                String msg = "与案件" + check.getCaseCode() + "存在利冲，承办人"
+                        + check.getRealName() + ",请核实";
+                result.put("success", "0");
+                result.put("msg", msg);
+                return result;
+            }
+            Client client = new Client();
+            client.setCaseId(myCase.getId());
+            client.setCaseCode(myCase.getCaseCode());
+            client.setRealName(myCase.getDealer());
+            client.setClientName(clientName);
+            client.setIdentity(0);
+            client.setCreatedAt(time);
+            client.setClientType((int)itemMap.get("typeid"));
+            clients.add(client);
+        }
+        for(Object o : JSON.parseArray(accused)){
+            Map<String, Object> itemMap = JSONObject.toJavaObject((JSON)o, Map.class);
+            String clientName = (String)itemMap.get("accusedName");
+            Client check = clientService.conflictCheckClient(clientName);
+            if (check != null) {
+                String msg = "与案件" + check.getCaseCode() + "存在利冲，承办人"
+                        + check.getRealName() + ",请核实";
+                result.put("success", "0");
+                result.put("msg", msg);
+                return result;
+            }
+            Client client = new Client();
+            client.setCaseId(myCase.getId());
+            client.setCaseCode(myCase.getCaseCode());
+            client.setRealName(myCase.getDealer());
+            client.setClientName(clientName);
+            client.setIdentity(1);
+            client.setCreatedAt(time);
+            client.setClientType((int)itemMap.get("typeid"));
+            clients.add(client);
+        }
+        myCase.setDealer(dealer);
+        myCase.setRemarks(remarks);
+        caseService.updateCase(myCase);
+        //删除旧client
         return null;
     }
 }
