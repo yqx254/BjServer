@@ -137,6 +137,12 @@ public class CaseController {
             ResponseUtil.write(response, result);
             log.error("委托人信息为空");
         }
+        if(myCase.getDealer() == null || "".equals(myCase.getDealer())){
+            result.put("success", false);
+            result.put("msg", "承办人信息不能为空");
+            ResponseUtil.write(response, result);
+            log.error("承办人信息为空");
+        }
         String [] nameArr = myCase.getClientNameArr();
         int [] idtArr = myCase.getClientIdtArr();
         String [] opNameArr = myCase.getOpponentNameArr();

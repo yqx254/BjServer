@@ -33,6 +33,9 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public int addClient(Client client) {
+        if(client.getClientName() == null || "".equals(client.getClientName())){
+            return 0;
+        }
         return clientDao.addClient(client);
     }
 

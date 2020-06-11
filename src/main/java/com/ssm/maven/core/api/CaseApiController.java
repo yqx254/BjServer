@@ -9,6 +9,7 @@ import com.ssm.maven.core.entity.Client;
 import com.ssm.maven.core.entity.User;
 import com.ssm.maven.core.service.CaseService;
 import com.ssm.maven.core.service.ClientService;
+import com.ssm.maven.core.service.ConfigService;
 import com.ssm.maven.core.util.ResponseUtil;
 import net.sf.json.JSONArray;
 import org.apache.commons.collections.map.HashedMap;
@@ -36,6 +37,9 @@ public class CaseApiController {
 
     @Resource
     private ClientService clientService;
+
+    @Resource
+    private ConfigService configService;
 
     private static final Logger log = Logger.getLogger(CaseApiController.class);
 
@@ -104,6 +108,94 @@ public class CaseApiController {
         myCase.setOpponentIdtArr(opIdtList.stream().mapToInt(x -> x).toArray());
         return myCase;
     }
+    @RequestMapping("/add")
+    public Map<String, String> addCase(
+            @RequestParam("category") String category,
+            @RequestParam("dealer") String dealer,
+            @RequestParam("remarks") String remarks,
+            @RequestParam("accuser") String accuser,
+            @RequestParam("accused") String accused
+    ){
+        Map<String, String > result = new HashMap<>(8);
+        List<Client> clients = new ArrayList<>(64);
+        Case myCase = new Case();
+        if(dealer == null || "".equals(dealer)){
+            result.put("success","0");
+            result.put("msg","承办人不能为空");
+        }
+        myCase.setCategory(Integer.parseInt(category));
+        myCase.setDealer(dealer);
+        myCase.setRemarks(remarks);
+        long time = System.currentTimeMillis() / 1000;
+        for(Object o : JSON.parseArray(accuser)){
+            Map<String, Object> itemMap = JSONObject.toJavaObject((JSON)o, Map.class);
+            String clientName = (String)itemMap.get("accuserName");
+            Client check = clientService.conflictCheckClient(clientName);
+            if (check != null) {
+                String msg = "与案件" + check.getCaseCode() + "存在利冲，承办人"
+                        + check.getRealName() + ",请核实";
+                result.put("success", "0");
+                result.put("msg", msg);
+                return result;
+            }
+            Client client = new Client();
+            client.setClientName(clientName);
+            client.setIdentity(0);
+            client.setCreatedAt(time);
+            client.setClientType((Integer) itemMap.get("typeid"));
+            clients.add(client);
+        }
+        Object first = JSON.parseArray(accuser).get(0);
+        Map<String, Object> tmp = JSONObject.toJavaObject((JSON)first,Map.class);
+        String accuserName = (String)tmp.get("accuserName");
+        if(accuserName == null || "".equals(accuserName)){
+            result.put("success", "0");
+            result.put("msg", "委托人信息不能为空");
+        }
+        myCase.setClientName((String)tmp.get("accuserName"));
+        myCase.setClientCount(JSON.parseArray(accuser).size());
+        for(Object o : JSON.parseArray(accused)){
+            Map<String, Object> itemMap = JSONObject.toJavaObject((JSON)o, Map.class);
+            String clientName = (String)itemMap.get("accusedName");
+            Client check = clientService.conflictCheckOpponent(clientName);
+            if (check != null) {
+                String msg = "与案件" + check.getCaseCode() + "存在利冲，承办人"
+                        + check.getRealName() + ",请核实";
+                result.put("success", "0");
+                result.put("msg", msg);
+                return result;
+            }
+            Client client = new Client();
+            client.setClientName(clientName);
+            client.setIdentity(1);
+            client.setCreatedAt(time);
+            client.setClientType((Integer)itemMap.get("typeid"));
+            clients.add(client);
+        }
+
+        Object firstOp = JSON.parseArray(accused).get(0);
+        if(firstOp != null){
+            Map<String, Object> tmpOp = JSONObject.toJavaObject((JSON)firstOp,Map.class);
+            myCase.setOpponentName((String)tmpOp.get("accusedName"));
+            myCase.setOpponentCount(JSON.parseArray(accused).size());
+        }
+        String caseCode = configService.setThenGetCaseCode(myCase.getCategory());
+        int re = caseService.addCase(myCase);
+        if(re <= 0){
+            result.put("success", "0");
+            result.put("msg","数据库操作失败，请重试");
+            return result;
+        }
+        for(Client c : clients){
+            c.setCaseId(myCase.getId());
+            c.setCaseCode(myCase.getCaseCode());
+            c.setRealName(myCase.getDealer());
+            clientService.addClient(c);
+        }
+        result.put("success","1");
+        result.put("msg","保存成功！ 案号为： " + caseCode);
+        return result;
+    }
 
     @RequestMapping("/edit")
     public Map<String, String> editCase(HttpServletRequest request,
@@ -112,7 +204,7 @@ public class CaseApiController {
                                         @RequestParam("remarks") String remarks,
                                         @RequestParam("accuser") String accuser,
                                         @RequestParam("accused") String accused){
-        Map<String, String > result = new HashMap<>(16);
+        Map<String, String > result = new HashMap<>(8);
         List<Client> clients = new ArrayList<>(64);
         Case myCase = caseService.caseDetail(id);
         long time = System.currentTimeMillis() / 1000;
@@ -134,13 +226,27 @@ public class CaseApiController {
             client.setClientName(clientName);
             client.setIdentity(0);
             client.setCreatedAt(time);
-            client.setClientType((int)itemMap.get("typeid"));
+            client.setClientType((Integer) itemMap.get("typeid"));
             clients.add(client);
         }
+        Object first = JSON.parseArray(accuser).get(0);
+        Map<String, Object> tmp = JSONObject.toJavaObject((JSON)first,Map.class);
+        String accuserName = (String)tmp.get("accuserName");
+        if(accuserName == null || "".equals(accuserName)){
+            result.put("success", "0");
+            result.put("msg", "委托人信息不能为空");
+        }
+        if(dealer == null || "".equals(dealer)){
+            result.put("success", "0");
+            result.put("msg", "承办人信息不能为空");
+        }
+        myCase.setClientName((String)tmp.get("accuserName"));
+        myCase.setClientCount(JSON.parseArray(accuser).size());
+
         for(Object o : JSON.parseArray(accused)){
             Map<String, Object> itemMap = JSONObject.toJavaObject((JSON)o, Map.class);
             String clientName = (String)itemMap.get("accusedName");
-            Client check = clientService.conflictCheckClient(clientName);
+            Client check = clientService.conflictCheckOpponent(clientName);
             if (check != null) {
                 String msg = "与案件" + check.getCaseCode() + "存在利冲，承办人"
                         + check.getRealName() + ",请核实";
@@ -155,13 +261,31 @@ public class CaseApiController {
             client.setClientName(clientName);
             client.setIdentity(1);
             client.setCreatedAt(time);
-            client.setClientType((int)itemMap.get("typeid"));
+            client.setClientType((Integer)itemMap.get("typeid"));
             clients.add(client);
         }
+        Object firstOp = JSON.parseArray(accused).get(0);
+        if(firstOp != null){
+            Map<String, Object> tmpOp = JSONObject.toJavaObject((JSON)firstOp,Map.class);
+            myCase.setOpponentName((String)tmpOp.get("accusedName"));
+            myCase.setOpponentCount(JSON.parseArray(accused).size());
+        }
+
         myCase.setDealer(dealer);
         myCase.setRemarks(remarks);
-        caseService.updateCase(myCase);
+        myCase.setUpdatedAt(time);
         //删除旧client
-        return null;
+        int r = clientService.deleteByCase(Integer.parseInt(myCase.getId()));
+        if(r <= 0){
+            result.put("success", "0");
+            result.put("msg", "客户数据操作失败，请重试");
+            return result;
+        }
+        for(Client c : clients){
+            clientService.addClient(c);
+        }
+        caseService.updateCase(myCase);
+        result.put("success", "1");
+        return result;
     }
 }

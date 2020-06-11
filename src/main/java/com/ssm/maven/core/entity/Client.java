@@ -93,4 +93,16 @@ public class Client implements Serializable {
     public void setDeleteFlag(int deleteFlag) {
         this.deleteFlag = deleteFlag;
     }
+
+    public Client copy(){
+        Client copy = new Client();
+        copy.setCaseId(this.caseId);
+        copy.setCaseCode(this.caseCode);
+        copy.setRealName(this.realName);
+        copy.setIdentity(this.identity);
+        copy.setClientName(this.clientName);
+        copy.setCreatedAt(this.createdAt);
+        copy.setClientType(this.clientType);
+        return copy;
+    }
 }
