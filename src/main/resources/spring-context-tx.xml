@@ -43,6 +43,9 @@
         </tx:attributes>
     </tx:advice>
 
+    <!-- 使用annotation注解方式配置事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager"  />
+
     <!-- 配置事务切面 -->
     <aop:config>
         <aop:pointcut id="serviceOperation"

@@ -16,6 +16,8 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -109,6 +111,7 @@ public class CaseApiController {
         return myCase;
     }
     @RequestMapping("/add")
+    @Transactional
     public Map<String, String> addCase(
             @RequestParam("category") String category,
             @RequestParam("dealer") String dealer,
@@ -123,10 +126,12 @@ public class CaseApiController {
             result.put("success","0");
             result.put("msg","承办人不能为空");
         }
+        long time = System.currentTimeMillis() / 1000;
         myCase.setCategory(Integer.parseInt(category));
         myCase.setDealer(dealer);
         myCase.setRemarks(remarks);
-        long time = System.currentTimeMillis() / 1000;
+        myCase.setCreatedAt(time);
+        myCase.setUpdatedAt(time);
         for(Object o : JSON.parseArray(accuser)){
             Map<String, Object> itemMap = JSONObject.toJavaObject((JSON)o, Map.class);
             String clientName = (String)itemMap.get("accuserName");
@@ -198,12 +203,13 @@ public class CaseApiController {
     }
 
     @RequestMapping("/edit")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public Map<String, String> editCase(HttpServletRequest request,
                                         @RequestParam("id") String id,
                                         @RequestParam("dealer") String dealer,
                                         @RequestParam("remarks") String remarks,
                                         @RequestParam("accuser") String accuser,
-                                        @RequestParam("accused") String accused){
+                                        @RequestParam("accused") String accused) throws Exception{
         Map<String, String > result = new HashMap<>(8);
         List<Client> clients = new ArrayList<>(64);
         Case myCase = caseService.caseDetail(id);
@@ -284,7 +290,13 @@ public class CaseApiController {
         for(Client c : clients){
             clientService.addClient(c);
         }
-        caseService.updateCase(myCase);
+        try{
+            caseService.updateCase(myCase);
+        }
+        catch(Exception e){
+            throw e;
+        }
+
         result.put("success", "1");
         return result;
     }

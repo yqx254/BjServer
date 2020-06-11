@@ -13,6 +13,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -117,6 +118,7 @@ public class CaseController {
     }
 
     @RequestMapping("/add")
+    @Transactional
     public String addCase(@RequestParam(value = "id", required = false) String id,
                           @RequestParam(value = "force", required = false) Integer force,
                           Case myCase,
