@@ -226,8 +226,8 @@ public class CaseController {
             client.setClientName(opNameArr[j]);
             client.setIdentity(1);
             client.setClientType(opIdtArr[j]);
-            client.setRealName(myCase.getCreateName());
-            client.setCreatedAt(myCase.getCreatedAt());
+            client.setRealName(myCase.getDealer());
+            client.setCreatedAt(time);
             clients.add(client);
         }
         if(id != null && myCase.getCaseCode() != null){

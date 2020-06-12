@@ -146,14 +146,14 @@
     <form id="fm" method="post">
         <table cellspacing="8px">
             <tr>
-                <td>用户名：</td>
+                <td>登录帐号：</td>
                 <td><input type="text" id="userName" name="userName"
                            class="easyui-validatebox" required="true"/>&nbsp;<font
                         color="red">*</font>
                 </td>
             </tr>
             <tr>
-                <td>用户名：</td>
+                <td>真实姓名：</td>
                 <td><input type="text" id="realName" name="realName"
                            class="easyui-validatebox" required="true"/>&nbsp;<font
                         color="red">*</font>

@@ -58,8 +58,8 @@
             <td width="50%"></td>
             <td valign="bottom"
                 style="font-size: 20px;color:#8B8B8B;font-family: '楷体';"
-                align="right" width="50%"><font size="3">&nbsp;&nbsp;<strong>当前用户：</strong>${currentUser.userName
-                    }</font>【管理员】
+                align="right" width="50%"><font size="3">&nbsp;&nbsp;<strong>欢迎！</strong>${currentUser.realName
+                    }</font>
             </td>
         </tr>
     </table>
