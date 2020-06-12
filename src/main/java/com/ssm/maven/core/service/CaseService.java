@@ -1,6 +1,7 @@
 package com.ssm.maven.core.service;
 
 import com.ssm.maven.core.entity.Case;
+import com.ssm.maven.core.entity.Client;
 
 import java.util.List;
 import java.util.Map;
@@ -28,13 +29,13 @@ public interface CaseService {
      * 新建案件
      * @param newCase 新的案件
      */
-    int addCase(Case newCase);
+    int addCase(Case newCase, List<Client> clients);
 
     /**
      * 更新案件信息
      * @param  oldCase 案件信息
      */
-    void updateCase(Case oldCase);
+    void updateCase(Case oldCase, List<Client> clients);
 
     /**
      * 获取案件详情
@@ -51,7 +52,8 @@ public interface CaseService {
     /**
      * 结案
      * @param caseId 案件编号
+     * @param clear 是否将相关人员清理出利冲校验
      * @return 操作结果
      */
-    int solveCase(Integer caseId);
+    int solveCase(Integer caseId, Integer clear);
 }

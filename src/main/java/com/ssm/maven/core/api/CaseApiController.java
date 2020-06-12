@@ -112,7 +112,7 @@ public class CaseApiController {
     }
     @RequestMapping("/add")
     @Transactional
-    public Map<String, String> addCase(
+    public Map<String, String> addCase(HttpServletRequest request,
             @RequestParam("category") String category,
             @RequestParam("dealer") String dealer,
             @RequestParam("remarks") String remarks,
@@ -120,6 +120,14 @@ public class CaseApiController {
             @RequestParam("accused") String accused
     ){
         Map<String, String > result = new HashMap<>(8);
+        HttpSession session = request.getSession();
+        User user = (User)session.getAttribute("currentUser");
+        if(user == null || user.getId() == null){
+            result.put("success","0");
+            result.put("msg","登录状态失效，请重新登录");
+            result.put("code","302");
+            return result;
+        }
         List<Client> clients = new ArrayList<>(64);
         Case myCase = new Case();
         if(dealer == null || "".equals(dealer)){
@@ -132,6 +140,9 @@ public class CaseApiController {
         myCase.setRemarks(remarks);
         myCase.setCreatedAt(time);
         myCase.setUpdatedAt(time);
+        myCase.setCreateId(user.getId());
+        myCase.setCreateTel(user.getUserName());
+        myCase.setCreateName(user.getRealName());
         for(Object o : JSON.parseArray(accuser)){
             Map<String, Object> itemMap = JSONObject.toJavaObject((JSON)o, Map.class);
             String clientName = (String)itemMap.get("accuserName");
@@ -185,18 +196,13 @@ public class CaseApiController {
             myCase.setOpponentCount(JSON.parseArray(accused).size());
         }
         String caseCode = configService.setThenGetCaseCode(myCase.getCategory());
-        int re = caseService.addCase(myCase);
-        if(re <= 0){
-            result.put("success", "0");
-            result.put("msg","数据库操作失败，请重试");
-            return result;
-        }
+        myCase.setCaseCode(caseCode);
         for(Client c : clients){
             c.setCaseId(myCase.getId());
             c.setCaseCode(myCase.getCaseCode());
             c.setRealName(myCase.getDealer());
-            clientService.addClient(c);
         }
+        caseService.addCase(myCase, clients);
         result.put("success","1");
         result.put("msg","保存成功！ 案号为： " + caseCode);
         return result;
@@ -211,6 +217,14 @@ public class CaseApiController {
                                         @RequestParam("accuser") String accuser,
                                         @RequestParam("accused") String accused) throws Exception{
         Map<String, String > result = new HashMap<>(8);
+        HttpSession session = request.getSession();
+        User user = (User)session.getAttribute("currentUser");
+        if(user == null || user.getId() == null){
+            result.put("success","0");
+            result.put("msg","登录状态失效，请重新登录");
+            result.put("code","302");
+            return result;
+        }
         List<Client> clients = new ArrayList<>(64);
         Case myCase = caseService.caseDetail(id);
         long time = System.currentTimeMillis() / 1000;
@@ -270,33 +284,20 @@ public class CaseApiController {
             client.setClientType((Integer)itemMap.get("typeid"));
             clients.add(client);
         }
-        Object firstOp = JSON.parseArray(accused).get(0);
-        if(firstOp != null){
-            Map<String, Object> tmpOp = JSONObject.toJavaObject((JSON)firstOp,Map.class);
-            myCase.setOpponentName((String)tmpOp.get("accusedName"));
-            myCase.setOpponentCount(JSON.parseArray(accused).size());
+        if(JSON.parseArray(accused).size() > 0){
+            Object firstOp = JSON.parseArray(accused).get(0);
+            if(firstOp != null){
+                Map<String, Object> tmpOp = JSONObject.toJavaObject((JSON)firstOp,Map.class);
+                myCase.setOpponentName((String)tmpOp.get("accusedName"));
+                myCase.setOpponentCount(JSON.parseArray(accused).size());
+            }
         }
 
         myCase.setDealer(dealer);
         myCase.setRemarks(remarks);
         myCase.setUpdatedAt(time);
-        //删除旧client
-        int r = clientService.deleteByCase(Integer.parseInt(myCase.getId()));
-        if(r <= 0){
-            result.put("success", "0");
-            result.put("msg", "客户数据操作失败，请重试");
-            return result;
-        }
-        for(Client c : clients){
-            clientService.addClient(c);
-        }
-        try{
-            caseService.updateCase(myCase);
-        }
-        catch(Exception e){
-            throw e;
-        }
-
+        //更换client并更新case
+        caseService.updateCase(myCase, clients);
         result.put("success", "1");
         return result;
     }

@@ -132,7 +132,7 @@ public class CaseController {
         }
         long time = System.currentTimeMillis() / 1000;
         force = (force == null )? 0 : force;
-        String resMsg;
+        String resMsg = null;
         if(myCase.getClientNameArr()[0] == null || "".equals(myCase.getClientNameArr()[0])){
             result.put("success", false);
             result.put("msg", "委托人信息不能为空");
@@ -178,9 +178,9 @@ public class CaseController {
                     }
                 }
             }
+            myCase.setOpponentName(opNameArr[0]);
+            myCase.setOpponentCount(opNameArr.length);
         }
-        myCase.setOpponentName(opNameArr[0]);
-        myCase.setOpponentCount(opNameArr.length);
         myCase.setClientName(nameArr[0]);
         myCase.setClientCount(nameArr.length);
         myCase.setCreateId(user.getId());
@@ -188,18 +188,7 @@ public class CaseController {
         myCase.setCreateName(user.getRealName());
         //编辑
         if(id != null && myCase.getCaseCode() != null){
-            resMsg="修改成功！";
             myCase.setUpdatedAt(time);
-            //删掉旧的客户，待重新添加
-            int r = clientService.deleteByCase(Integer.parseInt(myCase.getId()));
-            if(r <= 0){
-                result.put("success", false);
-                result.put("msg", "客户数据操作失败，请重试");
-                ResponseUtil.write(response, result);
-                log.error("客户数据删除失败");
-            }
-            //更新数据
-            caseService.updateCase(myCase);
         }
         else{
             //新增
@@ -214,16 +203,8 @@ public class CaseController {
             myCase.setCaseCode(caseCode);
             myCase.setCreatedAt(time);
             myCase.setUpdatedAt(time);
-            //TODO: 搞事务？
-            int re = caseService.addCase(myCase);
-            if(re <= 0){
-                result.put("success", false);
-                result.put("msg","数据库操作失败，请重试");
-                ResponseUtil.write(response, result);
-                return null;
-            }
         }
-
+        List<Client> clients = new ArrayList<>(32);
         for(int i = 0; i < nameArr.length; i ++){
             Client client = new Client();
             client.setCaseId(myCase.getId());
@@ -233,7 +214,7 @@ public class CaseController {
             client.setClientType(idtArr[i]);
             client.setRealName(myCase.getDealer());
             client.setCreatedAt(time);
-            clientService.addClient(client);
+            clients.add(client);
         }
         for(int j = 0;j < opNameArr.length; j ++){
             if(opNameArr[j] == null || "".equals(opNameArr[j])){
@@ -247,7 +228,16 @@ public class CaseController {
             client.setClientType(opIdtArr[j]);
             client.setRealName(myCase.getCreateName());
             client.setCreatedAt(myCase.getCreatedAt());
-            clientService.addClient(client);
+            clients.add(client);
+        }
+        if(id != null && myCase.getCaseCode() != null){
+            resMsg="修改成功！";
+            myCase.setUpdatedAt(time);
+            //更新数据
+            caseService.updateCase(myCase, clients);
+        }
+        else{
+            caseService.addCase(myCase, clients);
         }
         result.put("success", true);
         result.put("msg",resMsg);
@@ -304,10 +294,7 @@ public class CaseController {
     public String solve(@RequestParam(value = "id") String id,
                         Integer clear,HttpServletResponse response) throws Exception{
         JSONObject result = new JSONObject();
-        int res = caseService.solveCase(Integer.parseInt(id));
-        if(clear > 0){
-            clientService.solveClient(Integer.parseInt(id));
-        }
+        int res = caseService.solveCase(Integer.parseInt(id), clear);
         result.put("success", res > 0);
         ResponseUtil.write(response, result);
         return null;
