@@ -47,4 +47,19 @@ public interface UserService {
      * @return
      */
     public int deleteUser(Integer id);
+
+    /**
+     * 密码加盐
+     * @param password 密码
+     * @param salt 盐
+     * @return 加过盐的密码
+     */
+    public String saltPwd(String password, String salt);
+
+    /**
+     *  密码加盐
+     * @param password 密码
+     * @return 加过盐的密码
+     */
+    public String saltPwd(String password);
 }

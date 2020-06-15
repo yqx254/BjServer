@@ -44,8 +44,8 @@
     </select>
 
     <insert id="addUser" parameterType="User">
-        insert into bj_user(user_name,password,role_id)
-        values(#{userName},#{password},#{roleId})
+        insert into bj_user(user_name,realname,password,role_id)
+        values(#{userName},#{realName},#{password},#{roleId})
     </insert>
 
     <update id="updateUser" parameterType="User">

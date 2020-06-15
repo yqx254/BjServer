@@ -2,6 +2,7 @@ package com.ssm.maven.core.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.annotation.Resource;
 
@@ -61,6 +62,41 @@ public class UserServiceImpl implements UserService {
             return 0;
         }
         return userDao.deleteUser(id);
+    }
+
+    /**
+     * 密码加盐
+     *
+     * @param password 密码
+     * @param salt     盐
+     * @return 加过盐的密码
+     */
+    @Override
+    public String saltPwd(String password, String salt) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(password.substring(0,3));
+        builder.append(salt);
+        builder.append(password.substring(3));
+        return builder.toString();
+    }
+
+    /**
+     * 密码加盐
+     *
+     * @param password 密码
+     * @return 加过盐的密码
+     */
+    @Override
+    public String saltPwd(String password) {
+        int saltLen = 4;
+        Random random = new Random();
+        String str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0;i < saltLen ; i ++){
+            int num = random.nextInt(str.length());
+            builder.append(str.charAt(num));
+        }
+        return saltPwd(password, builder.toString());
     }
 
 }

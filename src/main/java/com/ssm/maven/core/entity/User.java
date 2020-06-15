@@ -19,6 +19,7 @@ public class User {
     private String roleId;
     private String roleName;
     private String realName;
+    private String salt;
 
     public Integer getId() {
         return id;
@@ -66,5 +67,13 @@ public class User {
 
     public void setRealName(String realName) {
         this.realName = realName;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }
