@@ -118,8 +118,10 @@ public class UserController {
      */
     @RequestMapping("/modifyPassword")
     public String modifyPassword(User user, HttpServletResponse response) throws Exception {
-        String MD5pwd = MD5Util.MD5Encode(user.getPassword(), "UTF-8");
+        String salt = userService.getSalt();
+        String MD5pwd = MD5Util.MD5Encode(userService.saltPwd(user.getPassword(),salt), "UTF-8");
         user.setPassword(MD5pwd);
+        user.setSalt(salt);
         int resultTotal = userService.updateUser(user);
         JSONObject result = new JSONObject();
         if (resultTotal > 0) {
@@ -183,9 +185,11 @@ public class UserController {
      */
     @RequestMapping("/save")
     public String save(User user, HttpServletResponse response) throws Exception {
-        int resultTotal = 0;
-        String MD5pwd = MD5Util.MD5Encode(user.getPassword(), "UTF-8");
+        int resultTotal;
+        String salt = userService.getSalt();
+        String MD5pwd = MD5Util.MD5Encode(userService.saltPwd(user.getPassword(), salt), "UTF-8");
         user.setPassword(MD5pwd);
+        user.setSalt(salt);
         if (user.getId() == null) {
             resultTotal = userService.addUser(user);
         } else {

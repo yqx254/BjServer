@@ -56,10 +56,9 @@ public interface UserService {
      */
     public String saltPwd(String password, String salt);
 
+
     /**
-     *  密码加盐
-     * @param password 密码
-     * @return 加过盐的密码
+     * 生成加盐串
      */
-    public String saltPwd(String password);
+    public String getSalt();
 }

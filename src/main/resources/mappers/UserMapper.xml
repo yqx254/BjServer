@@ -44,8 +44,8 @@
     </select>
 
     <insert id="addUser" parameterType="User">
-        insert into bj_user(user_name,realname,password,role_id)
-        values(#{userName},#{realName},#{password},#{roleId})
+        insert into bj_user(user_name,realname,password,role_id,salt)
+        values(#{userName},#{realName},#{password},#{roleId},#{salt})
     </insert>
 
     <update id="updateUser" parameterType="User">
@@ -62,6 +62,9 @@
             </if>
             <if test="roleId != null and roleId != '' ">
                 role_id = #{roleId}
+            </if>
+            <if test="salt != null and salt != '' ">
+                salt = ${salt}
             </if>
         </set>
         where id=#{id}

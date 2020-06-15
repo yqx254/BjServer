@@ -73,21 +73,14 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String saltPwd(String password, String salt) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(password.substring(0,3));
-        builder.append(salt);
-        builder.append(password.substring(3));
-        return builder.toString();
+        return password.substring(0, 3) +
+                salt +
+                password.substring(3);
     }
 
-    /**
-     * 密码加盐
-     *
-     * @param password 密码
-     * @return 加过盐的密码
-     */
+
     @Override
-    public String saltPwd(String password) {
+    public String getSalt(){
         int saltLen = 4;
         Random random = new Random();
         String str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -96,7 +89,6 @@ public class UserServiceImpl implements UserService {
             int num = random.nextInt(str.length());
             builder.append(str.charAt(num));
         }
-        return saltPwd(password, builder.toString());
+        return builder.toString();
     }
-
 }
