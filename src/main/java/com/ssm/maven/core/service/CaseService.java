@@ -56,4 +56,18 @@ public interface CaseService {
      * @return 操作结果
      */
     int solveCase(Integer caseId, Integer clear);
+
+    /**
+     *  获取所有的委托人姓名信息
+     * @param caseId 案件编号
+     * @return
+     */
+    String getAllClientName(Integer caseId);
+
+    /**
+     * 获取所有的对方当事人姓名信息
+     * @param caseId 案件编号
+     * @return
+     */
+    String getAllOpponentName(Integer caseId);
 }

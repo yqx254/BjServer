@@ -68,4 +68,26 @@ public class ClientServiceImpl implements ClientService {
     public List<Client> clientsByCase(String caseId) {
         return clientDao.clientsByCase(caseId);
     }
+
+    @Override
+    public String getClientsName(String caseId) {
+        List<Client>  clients= clientDao.getClientByCase(Integer.parseInt(caseId));
+        StringBuilder stb = new StringBuilder();
+        for(Client c : clients){
+            stb.append(c.getClientName());
+            stb.append(" ");
+        }
+        return stb.toString();
+    }
+
+    @Override
+    public String getOpponentsName(String caseId) {
+        List<Client>  opponents= clientDao.getOpponentByCase(Integer.parseInt(caseId));
+        StringBuilder stb = new StringBuilder();
+        for(Client c : opponents){
+            stb.append(c.getClientName());
+            stb.append(" ");
+        }
+        return stb.toString();
+    }
 }

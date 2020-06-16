@@ -61,4 +61,12 @@ public interface UserService {
      * 生成加盐串
      */
     public String getSalt();
+
+    /**
+     * 获取当前加盐串
+     * @param  username 登录名
+     * @return 盐串
+     */
+    public String querySalt(String username);
+
 }

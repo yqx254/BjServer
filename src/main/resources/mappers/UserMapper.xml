@@ -20,7 +20,7 @@
     </select>
 
     <select id="findUsers" parameterType="Map" resultMap="UserResult">
-        select u.id,u.user_name,u.realname, u.password,r.role_id, r.role_name from bj_user AS u
+        select u.id,u.user_name,u.realname,r.role_id, r.role_name from bj_user AS u
         JOIN bj_role AS r ON u.role_id = r.role_id
         <where>
             <if test="userName!=null and userName!='' ">
@@ -61,10 +61,10 @@
                 password=#{password},
             </if>
             <if test="roleId != null and roleId != '' ">
-                role_id = #{roleId}
+                role_id = #{roleId},
             </if>
             <if test="salt != null and salt != '' ">
-                salt = ${salt}
+                salt = #{salt},
             </if>
         </set>
         where id=#{id}
@@ -78,4 +78,8 @@
         where id = #{id}  AND <![CDATA[ id <> 1 ]]>
     </update>
 
+    <select id="getSalt" parameterType="String" resultType="String">
+        SELECT salt FROM bj_user
+        WHERE user_name = #{username}
+    </select>
 </mapper> 

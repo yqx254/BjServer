@@ -59,4 +59,11 @@ public interface UserDao {
      * @return
      */
     public int deleteUser(Integer id);
+
+    /**
+     *  获取加盐串，用于登录验证
+     * @param username 用户名
+     * @return 加盐串
+     */
+    public String getSalt(String username);
 }

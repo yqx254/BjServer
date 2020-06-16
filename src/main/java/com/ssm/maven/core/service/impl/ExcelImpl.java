@@ -1,9 +1,11 @@
 package com.ssm.maven.core.service.impl;
 
 import com.ssm.maven.core.entity.Case;
+import com.ssm.maven.core.service.ClientService;
 import org.apache.poi.hssf.usermodel.*;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,6 +19,10 @@ import java.util.List;
 
 @Service("ExcelImpl")
 public class ExcelImpl {
+
+    @Resource
+    protected ClientService clientService;
+
         public void exportCase(List<Case> caseList, String [] titles, ServletOutputStream outStream) throws  Exception{
             //book对应excel文件
             HSSFWorkbook workbook = new HSSFWorkbook();
@@ -35,8 +41,8 @@ public class ExcelImpl {
                 row = hssfSheet.createRow(j + 1);
                 Case myCase = caseList.get(j);
                 row.createCell(0).setCellValue(myCase.getCaseCode());
-                row.createCell(1).setCellValue(myCase.getClientName());
-                row.createCell(2).setCellValue(myCase.getOpponentName());
+                row.createCell(1).setCellValue(clientService.getClientsName(myCase.getId()));
+                row.createCell(2).setCellValue(clientService.getOpponentsName(myCase.getId()));
                 row.createCell(3).setCellValue(myCase.getDealer());
                 row.createCell(4).setCellValue(myCase.getRemarks());
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");

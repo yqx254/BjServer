@@ -58,7 +58,9 @@ public class UserController {
     @RequestMapping("/login")
     public ModelAndView login(User user, HttpServletRequest request) {
         try {
-            String MD5pwd = MD5Util.MD5Encode(user.getPassword(), "UTF-8");
+            String MD5pwd = MD5Util.MD5Encode(
+                    userService.saltPwd(
+                            user.getPassword(),userService.querySalt(user.getUserName())), "UTF-8");
             user.setPassword(MD5pwd);
         } catch (Exception e) {
             user.setPassword("");
@@ -87,7 +89,10 @@ public class UserController {
     public String loginMN(User user, HttpServletRequest request,
                           HttpServletResponse response) throws Exception {
         try {
-            String MD5pwd = MD5Util.MD5Encode(user.getPassword(), "UTF-8");
+        String MD5pwd = MD5Util.MD5Encode(
+                userService.saltPwd(
+                        user.getPassword(),userService.querySalt(user.getUserName())), "UTF-8");
+
             user.setPassword(MD5pwd);
         } catch (Exception e) {
             user.setPassword("");
@@ -157,7 +162,7 @@ public class UserController {
      */
     @RequestMapping("/list")
     public String list(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, User s_user, HttpServletResponse response) throws Exception {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>(32);
         if (page != null && rows != null) {
             PageBean pageBean = new PageBean(Integer.parseInt(page),
                     Integer.parseInt(rows));
@@ -177,7 +182,7 @@ public class UserController {
     }
 
     /**
-     * 添加或修改管理员
+     * 添加或修改用户
      *
      * @param response
      * @return
@@ -186,10 +191,12 @@ public class UserController {
     @RequestMapping("/save")
     public String save(User user, HttpServletResponse response) throws Exception {
         int resultTotal;
-        String salt = userService.getSalt();
-        String MD5pwd = MD5Util.MD5Encode(userService.saltPwd(user.getPassword(), salt), "UTF-8");
-        user.setPassword(MD5pwd);
-        user.setSalt(salt);
+        if(user.getPassword() != null && !"".equals(user.getPassword())){
+            String salt = userService.getSalt();
+            String MD5pwd = MD5Util.MD5Encode(userService.saltPwd(user.getPassword(), salt), "UTF-8");
+            user.setPassword(MD5pwd);
+            user.setSalt(salt);
+        }
         if (user.getId() == null) {
             resultTotal = userService.addUser(user);
         } else {

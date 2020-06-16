@@ -115,5 +115,27 @@ public class CaseServiceImpl implements CaseService {
         return  r;
     }
 
+    /**
+     * 获取所有的委托人姓名信息
+     *
+     * @param caseId 案件编号
+     * @return 委托人姓名
+     */
+    @Override
+    public String getAllClientName(Integer caseId) {
+        return null;
+    }
+
+    /**
+     * 获取所有的对方当事人姓名信息
+     *
+     * @param caseId 案件编号
+     * @return 对方当事人姓名
+     */
+    @Override
+    public String getAllOpponentName(Integer caseId) {
+        return null;
+    }
+
 
 }

@@ -65,4 +65,17 @@ public interface ClientDao {
 
     int deleteByCase(int caseId);
 
+    /**
+     *  获取所有的委托人
+     * @param caseId 案件编号
+     * @return 委托人列表
+     */
+    List<Client> getClientByCase(int caseId);
+
+    /**
+     *  获取所有对方当事人
+     * @param caseId 案件编号
+     * @return 对方当事人姓名
+     */
+    List<Client> getOpponentByCase(int caseId);
 }

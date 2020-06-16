@@ -90,4 +90,15 @@
         WHERE case_id = #{caseId}
     </delete>
 
+        <select id="getClientByCase" parameterType="Integer" resultMap="client">
+            SELECT  client_name FROM bj_client
+            WHERE case_id = #{caseId}
+            AND identity = 0
+        </select>
+
+    <select id="getOpponentByCase" parameterType="Integer" resultMap="client">
+            SELECT  client_name FROM bj_client
+            WHERE case_id = #{caseId}
+            AND identity = 1
+        </select>
 </mapper>

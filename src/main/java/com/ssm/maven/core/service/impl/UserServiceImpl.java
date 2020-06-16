@@ -91,4 +91,15 @@ public class UserServiceImpl implements UserService {
         }
         return builder.toString();
     }
+
+    /**
+     * 获取当前加盐串
+     *
+     * @param username 用户名
+     * @return 盐串
+     */
+    @Override
+    public String querySalt(String username) {
+        return userDao.getSalt(username);
+    }
 }

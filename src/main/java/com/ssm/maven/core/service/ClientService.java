@@ -28,4 +28,8 @@ public interface ClientService {
     List<Integer> findCaseOp(String clientName);
 
     List<Client> clientsByCase(String caseId);
+
+    String getClientsName(String caseId);
+
+    String getOpponentsName(String caseId);
 }
