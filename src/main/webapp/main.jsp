@@ -49,6 +49,41 @@
                                 }
                             });
         }
+
+        function modifyPassword(){
+            $("#passDlg").dialog("open").dialog("setTitle", "修改密码");
+        }
+        function modify(){
+            let pass = $("#pwd").val();
+            let passRepeat = $("#pwd-repeat").val();
+            if(pass !== passRepeat){
+                $.messager.alert("系统提示", "两次密码不一致！");
+                return ;
+            }
+            let userId = ${currentUser.id};
+            if(userId === ""){
+                $.messager.alert("系统提示", "登录超时！");
+                return;
+            }
+            $.post("${pageContext.request.contextPath}/user/modifyPassword.do", {
+                id: userId,
+                password: pass
+            }, function (result) {
+                if (result.success) {
+                    $.messager.alert("系统提示", "修改成功");
+                    $("#pwd").val("");
+                    $("#pwd-repeat").val("");
+                    $("#passDlg").dialog("close");
+                } else {
+                    $.messager.alert("系统提示", "修改失败，请稍后重试");
+                }
+            }, "json");
+        }
+        function closeModifyDialog(){
+            $("#pwd").val("");
+            $("#pwd-repeat").val("");
+            $("#passDlg").dialog("close");
+        }
     </script>
     <jsp:include page="login_chk.jsp"></jsp:include>
 <body class="easyui-layout">
@@ -94,17 +129,44 @@
     </c:forEach>
         <div title="个人中心" data-options="iconCls:'icon-item'"
              style="padding:10px;border:none;">
-        <a href="javascript:logout()"
+            <a href="javascript:modifyPassword()"
+               class="easyui-linkbutton"
+               data-options="plain:true,iconCls:'icon-exit'"
+               style="width: 150px;">
+                修改密码</a>
+            <a href="javascript:logout()"
                             class="easyui-linkbutton"
                             data-options="plain:true,iconCls:'icon-exit'"
                             style="width: 150px;">
-            安全退出${t}</a>
+            安全退出</a>
         </div>
     </div>
 </div>
+<div id="passDlg" class="easyui-dialog"
+     style="width: 270px;height:210px;padding: 10px 20px" closed="true"
+     buttons="#password-buttons">
+    <div class="messager-body">
+        <div>
+            <label>
+                新密码：<input type="password" id="pwd" data-options="validType:'length[6,32]'"
+                           class="easyui-validatebox" required="true"/>
+            </label>
+        </div>
+        <div>
+            <label>
+                确认密码：<input type="password" id="pwd-repeat" data-options="validType:'length[6,32]'"
+                            class="easyui-validatebox" required="true"/>
+            </label>
+        </div>
+    </div>
+</div>
+
+<div id="password-buttons">
+    <a href="javascript:modify()" class="easyui-linkbutton"
+       iconCls="icon-ok">确定</a>
+    <a href="javascript:closeModifyDialog()" class="easyui-linkbutton"
+       iconCls="icon-cancel">取消</a>
+</div>
+
 </body>
 </html>
-<script>
-    var par =${t};
-    console.log(par);//打印'随便写点东西'
-</script>
