@@ -81,7 +81,13 @@
                             $.messager.alert("系统提示", "数据已成功删除！");
                             $("#dg").datagrid("reload");
                         } else {
-                            $.messager.alert("系统提示", "数据删除失败！");
+                            if(result.msg != null){
+                                $.messager.alert("系统提示", result.msg);
+                            }
+                            else{
+                                $.messager.alert("系统提示", "数据删除失败！");
+                            }
+
                         }
                     }, "json");
                 }
@@ -134,7 +140,12 @@
                             $("#caseClsDlg").dialog("close");
                             $("#dg").datagrid("reload");
                         } else {
-                            $.messager.alert("系统提示", "数据操作失败！");
+                            if(result.msg != null){
+                                $.messager.alert("系统提示", result.msg);
+                            }
+                            else{
+                                $.messager.alert("系统提示", "数据操作失败！");
+                            }
                         }
                     }, "json");
                 }
@@ -288,7 +299,13 @@
                         $("input[name=caseCode]").val(mycase.caseCode);
                     }
                     else{
-                        $.messager.alert("系统提示", "查询信息失败，请重试");
+                        if(result.msg != null){
+                            $.messager.alert("系统提示", result.msg);
+                        }
+                        else{
+                            $.messager.alert("系统提示", "查询信息失败，请重试");
+                        }
+
                     }
                 },"json");
 
@@ -441,7 +458,12 @@
                         $("input[name=caseCode]").val(mycase.caseCode);
                     }
                     else{
-                        $.messager.alert("系统提示", "查询信息失败，请重试");
+                        if(result.msg != null){
+                            $.messager.alert("系统提示", result.msg);
+                        }
+                        else{
+                            $.messager.alert("系统提示", "查询信息失败，请重试");
+                        }
                     }
                 },"json");
         }

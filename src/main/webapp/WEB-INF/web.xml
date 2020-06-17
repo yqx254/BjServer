@@ -73,12 +73,12 @@
         <init-param>
             <!-- 用户名 -->
             <param-name>loginUsername</param-name>
-            <param-value>yourname</param-value>
+            <param-value>admin</param-value>
         </init-param>
         <init-param>
             <!-- 密码 -->
             <param-name>loginPassword</param-name>
-            <param-value>yourpassword</param-value>
+            <param-value>yqx1989254</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
