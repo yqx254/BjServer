@@ -75,7 +75,12 @@
                     $("#pwd-repeat").val("");
                     $("#passDlg").dialog("close");
                 } else {
-                    $.messager.alert("系统提示", "修改失败，请稍后重试");
+                    if(result.msg != null){
+                        $.messager.alert("系统提示", result.msg);
+                    }
+                    else{
+                        $.messager.alert("系统提示", "修改失败，请稍后重试");
+                    }
                 }
             }, "json");
         }
