@@ -1,10 +1,14 @@
 package controller.test;
 
 import com.ssm.maven.core.entity.User;
+import com.ssm.maven.core.service.ConfigService;
+import org.apache.commons.math3.analysis.function.Add;
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,6 +23,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import test.AddCase;
+
+import javax.annotation.Resource;
+
+import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.*;
 
@@ -34,6 +43,14 @@ public class CaseControllerTest {
     private MockMvc mockMvc;
 
     private MockHttpSession session;
+
+    @Autowired
+    private TaskExecutor taskExecutor;
+
+    @Resource
+    private ConfigService configService;
+
+    private static final Logger log = Logger.getLogger(CaseControllerTest.class);
 
     @Before
     public void init(){
@@ -94,5 +111,22 @@ public class CaseControllerTest {
                 .session(session))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @Rollback
+    public void testThread() throws InterruptedException {
+        int threadCnt = 25;
+        CountDownLatch latch = new CountDownLatch(threadCnt);
+        for(int i = 0; i < threadCnt; i ++){
+            taskExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(configService.setThenGetCaseCode(1));
+                    latch.countDown();
+                }
+            });
+        }
+        Thread.sleep(5000);
     }
 }

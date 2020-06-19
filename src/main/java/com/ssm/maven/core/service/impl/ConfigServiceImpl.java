@@ -3,6 +3,7 @@ package com.ssm.maven.core.service.impl;
 import com.ssm.maven.core.dao.ConfigDao;
 import com.ssm.maven.core.service.ConfigService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
@@ -22,7 +23,7 @@ public class ConfigServiceImpl implements ConfigService {
      * @return 案号
      */
     @Override
-    public String setThenGetCaseCode(int category) {
+    public synchronized  String setThenGetCaseCode(int category) {
         StringBuilder result = new StringBuilder();
         LocalDate date = LocalDate.now();
         String categoryName;
