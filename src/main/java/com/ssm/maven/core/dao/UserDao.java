@@ -66,4 +66,12 @@ public interface UserDao {
      * @return 加盐串
      */
     public String getSalt(String username);
+
+    /**
+     *  获取用户姓名，用于新建用户时的重复校验
+     *  扩展一下就可以用作他途
+     * @param username 用户名
+     * @return 用户名
+     */
+    String getUser(String username);
 }

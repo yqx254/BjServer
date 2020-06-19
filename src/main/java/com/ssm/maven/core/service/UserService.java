@@ -69,4 +69,11 @@ public interface UserService {
      */
     public String querySalt(String username);
 
+    /**
+     *  新增用户之前的重复检查
+     * @param username 要添加的用户名
+     * @return 是否存在重复
+     */
+    boolean checkUser(String username);
+
 }

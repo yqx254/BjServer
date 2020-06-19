@@ -197,12 +197,20 @@ public class UserController {
             user.setPassword(MD5pwd);
             user.setSalt(salt);
         }
+        JSONObject result = new JSONObject();
         if (user.getId() == null) {
+            log.info(userService.checkUser(user.getUserName()));
+            if(!userService.checkUser(user.getUserName())){
+                result.put("success", false);
+                result.put("msg","该用户已存在！");
+                ResponseUtil.write(response, result);
+                return null;
+            }
             resultTotal = userService.addUser(user);
         } else {
             resultTotal = userService.updateUser(user);
         }
-        JSONObject result = new JSONObject();
+
         if (resultTotal > 0) {
             result.put("success", true);
         } else {

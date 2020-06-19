@@ -66,14 +66,26 @@
         function saveUser() {
             $("#fm").form("submit", {
                 url: url,
+                contentType:"json",
                 onSubmit: function () {
                     return $(this).form("validate");
                 },
                 success: function (result) {
-                    $.messager.alert("系统提示", "保存成功");
-                    resetValue();
-                    $("#dlg").dialog("close");
-                    $("#dg").datagrid("reload");
+                    const data = $.parseJSON(result);
+                    if (data.success) {
+                        $.messager.alert("系统提示", "保存成功");
+                        resetValue();
+                        $("#dlg").dialog("close");
+                        $("#dg").datagrid("reload");
+                    }
+                    else{
+                        if(data.msg != null){
+                            $.messager.alert("系统提示", data.msg);
+                        }
+                        else{
+                            $.messager.alert("系统提示", "数据操作失败，请重试");
+                        }
+                    }
                 }
             });
         }

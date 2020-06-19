@@ -73,7 +73,7 @@
     <update id="deleteUser" parameterType="Integer">
         update bj_user
         <set>
-            delete_flag = 0
+            delete_flag = 2
         </set>
         where id = #{id}  AND <![CDATA[ id <> 1 ]]>
     </update>
@@ -81,5 +81,10 @@
     <select id="getSalt" parameterType="String" resultType="String">
         SELECT salt FROM bj_user
         WHERE user_name = #{username}
+    </select>
+
+    <select id="getUser" parameterType="String" resultType="String">
+        SELECT user_name FROM bj_user
+        WHERE user_name = #{username}  AND delete_flag = 0 LIMIT 1
     </select>
 </mapper> 

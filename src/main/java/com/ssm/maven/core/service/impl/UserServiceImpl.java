@@ -102,4 +102,16 @@ public class UserServiceImpl implements UserService {
     public String querySalt(String username) {
         return userDao.getSalt(username);
     }
+
+    /**
+     * 新增用户之前的重复检查
+     *
+     * @param username 要添加的用户名
+     * @return 是否存在重复
+     */
+    @Override
+    public boolean checkUser(String username) {
+        String userName = userDao.getUser(username);
+        return userName == null;
+    }
 }
