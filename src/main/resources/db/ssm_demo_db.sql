@@ -56,6 +56,9 @@ CREATE TABLE `bj_menu` (
 
 INSERT INTO `bjcase`.`bj_menu`(`id`, `title`, `parent_id`, `page_url`, `icon`) VALUES (1, '系统管理', 0, '', 'icon-item');
 INSERT INTO `bjcase`.`bj_menu`(`id`, `title`, `parent_id`, `page_url`, `icon`) VALUES (2, '成员列表', 1, 'userManage.jsp', 'icon-lxr');
+INSERT INTO `bjcase`.`bj_menu`(`id`, `title`, `parent_id`, `page_url`, `icon`) VALUES (3, '案件管理', 0, '', 'icon-item');
+INSERT INTO `bjcase`.`bj_menu`(`id`, `title`, `parent_id`, `page_url`, `icon`) VALUES (4, '案件信息', 3, 'caseManager.jsp', 'icon-lxr');
+INSERT INTO `bjcase`.`bj_menu`(`id`, `title`, `parent_id`, `page_url`, `icon`) VALUES (5, '案件信息', 3, 'caseList.jsp', 'icon-lxr');
 
 
 CREATE TABLE `bj_role` (
@@ -67,7 +70,7 @@ CREATE TABLE `bj_role` (
   `deleted_at` int DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='角色表';
-INSERT INTO `bjcase`.`bj_role`(`role_id`, `role_name`, `created_at`, `updated_at`, `delete_flag`, `deleted_at`) VALUES (1, '超级管理员', 1, 1, 0, NULL);
+INSERT INTO `bjcase`.`bj_role`(`role_id`, `role_name`, `created_at`, `updated_at`, `delete_flag`, `deleted_at`) VALUES (1, '管理员', 1, 1, 0, NULL);
 INSERT INTO `bjcase`.`bj_role`(`role_id`, `role_name`, `created_at`, `updated_at`, `delete_flag`, `deleted_at`) VALUES (2, '普通用户', 1, 1, 0, NULL);
 
 
@@ -79,6 +82,14 @@ CREATE TABLE `bj_role_menu_rel` (
   PRIMARY KEY (`rel_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单节点和角色ID关联表';
 
+INSERT INTO `bjcase`.`bj_role_menu_rel`(`rel_id`, `role_id`, `menu_id`, `delete_flag`) VALUES (1, 1, 1, 0);
+INSERT INTO `bjcase`.`bj_role_menu_rel`(`rel_id`, `role_id`, `menu_id`, `delete_flag`) VALUES (2, 1, 2, 0);
+INSERT INTO `bjcase`.`bj_role_menu_rel`(`rel_id`, `role_id`, `menu_id`, `delete_flag`) VALUES (3, 1, 3, 0);
+INSERT INTO `bjcase`.`bj_role_menu_rel`(`rel_id`, `role_id`, `menu_id`, `delete_flag`) VALUES (4, 1, 4, 0);
+INSERT INTO `bjcase`.`bj_role_menu_rel`(`rel_id`, `role_id`, `menu_id`, `delete_flag`) VALUES (5, 2, 3, 0);
+INSERT INTO `bjcase`.`bj_role_menu_rel`(`rel_id`, `role_id`, `menu_id`, `delete_flag`) VALUES (6, 2, 5, 0);
+
+
 CREATE TABLE `bj_user` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_name` varchar(100) NOT NULL DEFAULT '' COMMENT '登录名',
@@ -89,10 +100,8 @@ CREATE TABLE `bj_user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 
-INSERT INTO `bjcase`.`bj_user`(`id`, `user_name`, `password`, `realname`, `role_id`, `delete_flag`) VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '权限狗', 1, 0);
-INSERT INTO `bjcase`.`bj_user`(`id`, `user_name`, `password`, `realname`, `role_id`, `delete_flag`) VALUES (2, '15812071547', 'e10adc3949ba59abbe56e057f20f883e', '平民1', 2, 0);
-INSERT INTO `bjcase`.`bj_user`(`id`, `user_name`, `password`, `realname`, `role_id`, `delete_flag`) VALUES (3, '15877948460', 'c33367701511b4f6020ec61ded352059', '平民2', 2, 0);
 
+INSERT INTO `bjcase`.`bj_user`(`id`, `user_name`, `password`, `salt`, `realname`, `role_id`, `delete_flag`) VALUES (1, 'admin', 'f9591e6850529ff314df7924acce6cf7', 'LGRB', '超管', 1, 0);
 
 CREATE TABLE `bj_config` (
   `config_id` int NOT NULL AUTO_INCREMENT COMMENT '配置ID',
