@@ -139,12 +139,14 @@ public class CaseController {
             result.put("msg", "委托人信息不能为空");
             ResponseUtil.write(response, result);
             log.error("委托人信息为空");
+            return null;
         }
         if(myCase.getDealer() == null || "".equals(myCase.getDealer())){
             result.put("success", false);
             result.put("msg", "承办人信息不能为空");
             ResponseUtil.write(response, result);
             log.error("承办人信息为空");
+            return null;
         }
         String [] nameArr = myCase.getClientNameArr();
         int [] idtArr = myCase.getClientIdtArr();
@@ -200,6 +202,7 @@ public class CaseController {
                 result.put("msg", "案号生成失败，请重试");
                 ResponseUtil.write(response, result);
                 log.error("案号生成失败");
+                return null;
             }
             myCase.setCaseCode(caseCode);
             myCase.setCreatedAt(time);

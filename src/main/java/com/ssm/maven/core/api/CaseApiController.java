@@ -132,6 +132,7 @@ public class CaseApiController {
         if(dealer == null || "".equals(dealer)){
             result.put("success","0");
             result.put("msg","承办人不能为空");
+            return result;
         }
         long time = System.currentTimeMillis() / 1000;
         myCase.setCategory(Integer.parseInt(category));
@@ -166,6 +167,7 @@ public class CaseApiController {
         if(accuserName == null || "".equals(accuserName)){
             result.put("success", "0");
             result.put("msg", "委托人信息不能为空");
+            return result;
         }
         myCase.setClientName((String)tmp.get("accuserName"));
         myCase.setClientCount(JSON.parseArray(accuser).size());
@@ -254,10 +256,12 @@ public class CaseApiController {
         if(accuserName == null || "".equals(accuserName)){
             result.put("success", "0");
             result.put("msg", "委托人信息不能为空");
+            return result;
         }
         if(dealer == null || "".equals(dealer)){
             result.put("success", "0");
             result.put("msg", "承办人信息不能为空");
+            return result;
         }
         myCase.setClientName((String)tmp.get("accuserName"));
         myCase.setClientCount(JSON.parseArray(accuser).size());
