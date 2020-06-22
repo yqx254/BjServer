@@ -1,6 +1,7 @@
 package com.ssm.maven.core.pojo;
 
 import com.ssm.maven.core.entity.User;
+import com.ssm.maven.core.pojo.exception.LoginException;
 import com.ssm.maven.core.util.ResponseUtil;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -41,6 +42,7 @@ public class LoginAudience {
             result.put("msg","登录状态失效，请重新登录！");
             result.put("success", false);
             ResponseUtil.write(response,result);
+            throw new LoginException("Login status expired!");
         }
     }
 }

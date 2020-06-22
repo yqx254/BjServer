@@ -20,6 +20,8 @@ public class User {
     private String roleName;
     private String realName;
     private String salt;
+    private String token;
+    private Long expiredAt;
 
     public Integer getId() {
         return id;
@@ -75,5 +77,21 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Long getExpiredAt() {
+        return expiredAt;
+    }
+
+    public void setExpiredAt(Long expiredAt) {
+        this.expiredAt = expiredAt;
     }
 }

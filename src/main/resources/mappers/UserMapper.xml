@@ -66,6 +66,12 @@
             <if test="salt != null and salt != '' ">
                 salt = #{salt},
             </if>
+            <if test="token != null and token != '' ">
+                token = #{token},
+            </if>
+            <if test="expiredAt != null and expiredAt != '' ">
+                expired_at = #{expiredAt},
+            </if>
         </set>
         where id=#{id}
     </update>
@@ -86,5 +92,13 @@
     <select id="getUser" parameterType="String" resultType="String">
         SELECT user_name FROM bj_user
         WHERE user_name = #{username}  AND delete_flag = 0 LIMIT 1
+    </select>
+
+    <select id="getUserByToken" parameterType="String" resultMap="UserResult">
+        SELECT id, user_name,realname,role_id FROM bj_user
+        WHERE token = #{token}
+        AND delete_flag = 0
+        AND expired_at > UNIX_TIMESTAMP()
+         LIMIT 1
     </select>
 </mapper> 

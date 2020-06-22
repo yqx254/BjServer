@@ -46,6 +46,10 @@ public class MD5Util {
         return resultString;
     }
 
+    public static String getToken(String origin){
+        return MD5Encode(origin + "P2ssWo2d~@", "UTF-8").substring(8, 24);
+    }
+
     private static final String hexDigits[] = {"0", "1", "2", "3", "4", "5",
             "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
 }

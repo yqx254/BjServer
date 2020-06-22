@@ -20,7 +20,7 @@
 
     <select id="getCaseSerial" parameterType="String" resultType="Integer">
         SELECT config_value FROM bj_config
-        WHERE config_name = #{configName}
+        WHERE config_name = #{configName} FOR UPDATE
     </select>
 
     <update id="setCaseSerial" parameterType="String">

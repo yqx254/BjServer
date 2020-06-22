@@ -74,4 +74,11 @@ public interface UserDao {
      * @return 用户名
      */
     String getUser(String username);
+
+    /**
+     *  根据用户登录token来获取用户
+     * @param token 登录token
+     * @return 用户对象
+     */
+    User getUserByToken(String token);
 }

@@ -114,4 +114,15 @@ public class UserServiceImpl implements UserService {
         String userName = userDao.getUser(username);
         return userName == null;
     }
+
+    /**
+     * 根据用户token获取用户信息
+     *
+     * @param token 登录token
+     * @return 用户对象
+     */
+    @Override
+    public User getUserByToken(String token) {
+        return userDao.getUserByToken(token);
+    }
 }

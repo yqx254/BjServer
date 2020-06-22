@@ -92,7 +92,6 @@ public class UserController {
         String MD5pwd = MD5Util.MD5Encode(
                 userService.saltPwd(
                         user.getPassword(),userService.querySalt(user.getUserName())), "UTF-8");
-
             user.setPassword(MD5pwd);
         } catch (Exception e) {
             user.setPassword("");
@@ -104,9 +103,40 @@ public class UserController {
             result.put("success",false);
             result.put("msg","请认真核对账号密码");
             ResponseUtil.write(response,result);
+            return null;
         }
         HttpSession session = request.getSession();
         session.setAttribute("currentUser", resultUser);
+        String token = MD5Util.getToken(user.getUserName() + user.getPassword() + System.currentTimeMillis() / 1000);
+        //一星期不登录就过期
+        Long expire = System.currentTimeMillis() / 1000 + 7  * 86400;
+        resultUser.setToken(token);
+        resultUser.setExpiredAt(expire);
+        userService.updateUser(resultUser);
+        result.put("success", true);
+        result.put("token",token);
+        ResponseUtil.write(response,result);
+        return null;
+    }
+
+    @RequestMapping("/token-access")
+    public String tokenLogin(String token,HttpServletRequest request,
+                             HttpServletResponse response) throws Exception{
+        User user = userService.getUserByToken(token);
+        JSONObject result = new JSONObject();
+        if(user == null || user.getId() == null){
+            result.put("success", false);
+            ResponseUtil.write(response, result);
+            return null;
+        }
+        HttpSession session = request.getSession();
+        session.setAttribute("currentUser", user);
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        //刷新过期时间
+        Long expire = System.currentTimeMillis() / 1000 + 7  * 86400;
+        updateUser.setExpiredAt(expire);
+        userService.updateUser(updateUser);
         result.put("success", true);
         ResponseUtil.write(response,result);
         return null;

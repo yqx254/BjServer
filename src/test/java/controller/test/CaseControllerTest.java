@@ -117,15 +117,9 @@ public class CaseControllerTest {
     @Rollback
     public void testThread() throws InterruptedException {
         int threadCnt = 25;
-        CountDownLatch latch = new CountDownLatch(threadCnt);
         for(int i = 0; i < threadCnt; i ++){
-            taskExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println(configService.setThenGetCaseCode(1));
-                    latch.countDown();
-                }
-            });
+            taskExecutor.execute(()
+                    -> System.out.println(configService.setThenGetCaseCode(1)));
         }
         Thread.sleep(5000);
     }

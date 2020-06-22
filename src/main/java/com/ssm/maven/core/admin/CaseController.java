@@ -56,6 +56,7 @@ public class CaseController {
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         Map<String, Object> map = new HashMap<>(32);
+        log.info("wtf?");
         if(page != null  && rows != null){
             PageBean pageBean = new PageBean(Integer.parseInt(page),
                     Integer.parseInt(rows));

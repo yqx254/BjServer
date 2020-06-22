@@ -76,4 +76,10 @@ public interface UserService {
      */
     boolean checkUser(String username);
 
+    /**
+     *  根据用户token获取用户信息
+     * @param token 登录token
+     * @return 用户对象
+     */
+    User getUserByToken(String token);
 }
