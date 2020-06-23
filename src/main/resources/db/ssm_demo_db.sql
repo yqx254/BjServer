@@ -70,6 +70,7 @@ CREATE TABLE `bj_role` (
   `deleted_at` int DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='角色表';
+
 INSERT INTO `bjcase`.`bj_role`(`role_id`, `role_name`, `created_at`, `updated_at`, `delete_flag`, `deleted_at`) VALUES (1, '管理员', 1, 1, 0, NULL);
 INSERT INTO `bjcase`.`bj_role`(`role_id`, `role_name`, `created_at`, `updated_at`, `delete_flag`, `deleted_at`) VALUES (2, '普通用户', 1, 1, 0, NULL);
 
@@ -94,12 +95,14 @@ CREATE TABLE `bj_user` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_name` varchar(100) NOT NULL DEFAULT '' COMMENT '登录名',
   `password` varchar(100) NOT NULL DEFAULT '' COMMENT '加密后的密码字段',
+  `salt` varchar(32) DEFAULT NULL COMMENT '密码加盐字串',
   `realname` varchar(100) DEFAULT NULL COMMENT '真实姓名',
   `role_id` int DEFAULT NULL COMMENT '角色ID',
+  `token` varchar(16) DEFAULT NULL COMMENT '验证用token',
+  `expired_at` int DEFAULT NULL COMMENT '过期时间',
   `delete_flag` tinyint DEFAULT '0' COMMENT '删除标记',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
-
 
 INSERT INTO `bjcase`.`bj_user`(`id`, `user_name`, `password`, `salt`, `realname`, `role_id`, `delete_flag`) VALUES (1, 'admin', 'f9591e6850529ff314df7924acce6cf7', 'LGRB', '超管', 1, 0);
 
