@@ -2,19 +2,14 @@ package com.ssm.maven.core.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.ssm.maven.core.admin.CaseController;
+
 import com.ssm.maven.core.entity.Case;
 import com.ssm.maven.core.entity.Client;
 import com.ssm.maven.core.entity.User;
 import com.ssm.maven.core.service.CaseService;
 import com.ssm.maven.core.service.ClientService;
 import com.ssm.maven.core.service.ConfigService;
-import com.ssm.maven.core.util.ResponseUtil;
-import net.sf.json.JSONArray;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;

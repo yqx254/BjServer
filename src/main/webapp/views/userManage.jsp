@@ -233,7 +233,7 @@
             </tr>
             <tr>
                 <td>密码：</td>
-                <td><input type="password" id="password" name="password"
+                <td><input type="password" id="password" name="password" data-options="validType:'length[6,32]'"
                            class="easyui-validatebox" required="true"/>&nbsp;<span
                         style="color: red; ">*</span>
                 </td>
