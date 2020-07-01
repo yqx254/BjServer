@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>ssm-maven系统登录</title>
+    <title>冰鉴案件管理-登录</title>
     <%--<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.min.js"></script>--%>
     <style type=text/css>
         body {
@@ -148,3 +148,10 @@
         alert('${errorMsg}');
     }
 </script>
+<script type="text/javascript"
+        src="jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript"
+        src="jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript"
+        src="jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+

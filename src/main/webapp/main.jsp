@@ -5,17 +5,17 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>ssm-maven系统主页</title>
+    <title>冰鉴案件管理系统</title>
+    <script type="text/javascript"
+            src="jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <link rel="stylesheet" type="text/css"
           href="${pageContext.request.contextPath}/jquery-easyui-1.3.3/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css"
           href="${pageContext.request.contextPath}/jquery-easyui-1.3.3/themes/icon.css">
-    <script type="text/javascript"
-            src="${pageContext.request.contextPath}/jquery-easyui-1.3.3/jquery.min.js"></script>
-    <script type="text/javascript"
-            src="${pageContext.request.contextPath}/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
-    <script type="text/javascript"
-            src="${pageContext.request.contextPath}/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript">
         var url;
         function addTab(url, text, iconCls) {
