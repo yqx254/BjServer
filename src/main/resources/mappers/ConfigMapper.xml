@@ -8,9 +8,9 @@
         WHERE config_name="month"
     </select>
 
-    <update id="setMonth" parameterType="Integer">
+    <update id="setMonth" parameterType="String">
         UPDATE bj_config SET config_value = #{month}
-        WHERE config name = "month"
+        WHERE config_name = "month"
     </update>
 
     <update id="resetSerial">
