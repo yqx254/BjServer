@@ -49,7 +49,7 @@ public class CaseApiController {
         if(user == null || user.getId() == null){
             return caseList;
         }
-        log.info(user.getId());
+        log.info("api user id: " + user.getId());
         Map<String, Object> map = new HashMap<>(32);
         //最多取三十条
         map.put("size", 30);
