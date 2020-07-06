@@ -35,7 +35,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int updateUser(User user) {
-        //防止有人胡乱修改导致其他人无法正常登陆
+        //避免admin的信息被修改
+        //修改密码时，因为user.getUserName是空，可以正常运作
         if ("admin".equals(user.getUserName())) {
             return 0;
         }
