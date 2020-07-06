@@ -58,7 +58,7 @@
                 AND  <![CDATA[ created_at <  ]]> #{endAt}
             </if>
             <if test="createId != 0">
-                AND ( create_id = #{createId}  OR dealer  like #{dealer} )
+                AND ( create_id = #{createId}  OR FIND_IN_SET( #{dealer},replace(dealer, ' ', ',')) )
             </if>
             AND delete_flag = 0
         </where>
