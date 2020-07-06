@@ -81,6 +81,7 @@ public class CaseController {
         else{
             map.put("createId","0");
         }
+        map.put("dealer",user.getRealName());
         if(myCase.getCaseCode() != null && !"".equals(myCase.getCaseCode())){
             map.put("caseCode",myCase.getCaseCode());
         }

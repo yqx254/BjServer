@@ -61,6 +61,13 @@
         </where>
     </select>
 
+    <select id="findCaseAll" resultType="String" parameterType="String">
+        SELECT  DISTINCT case_id AS id FROM bj_client
+        <where>
+            client_name = #{clientName}
+        </where>
+    </select>
+
     <insert id="addClient" parameterType="Client">
         INSERT INTO bj_client(
         case_id, client_name, identity,client_type,case_code,

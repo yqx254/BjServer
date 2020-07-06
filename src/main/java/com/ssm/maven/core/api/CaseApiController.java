@@ -59,12 +59,13 @@ public class CaseApiController {
         else{
             map.put("createId","0");
         }
+        map.put("dealer",user.getRealName());
         //api只提供关键词查询
         if(keyword != null && !"".equals(keyword)){
             keyword = URLDecoder.decode(keyword, "UTF-8");
             //开头不是BJ表明不是案号
             if(keyword.indexOf("BJ") != 0){
-                List<Integer> ids = clientService.findCase(keyword);
+                List<Integer> ids = clientService.findCaseAll(keyword);
                 if(ids.size() == 0){
                     return caseList;
                 }

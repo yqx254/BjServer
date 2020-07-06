@@ -55,6 +55,12 @@ public interface ClientDao {
     List<Integer>findCaseOp(String clientName);
 
     /**
+     *  查询当事人相关的案件id，不限制身份
+     * @param clientName 当事人姓名
+     * @return id list
+     */
+    List<Integer>findCaseAll(String clientName);
+    /**
      * 结案并将数据移除校验
      * @param caseId 案件id
      * @return 操作结果
